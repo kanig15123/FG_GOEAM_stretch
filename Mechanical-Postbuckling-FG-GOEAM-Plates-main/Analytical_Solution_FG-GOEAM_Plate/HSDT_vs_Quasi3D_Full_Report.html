@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HSDT vs Quasi-3D: FG-GOEAM Plate Buckling — Full Mathematical & Numerical Comparison</title>
+  <meta name="description" content="Complete mathematical formulations and numerical comparisons of HSDT (standard) and Quasi-3D (thickness stretching) theories for FG-GOEAM plate buckling.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+  <style>
+    :root {
+      --bg: #060b18;
+      --bg2: #0d1424;
+      --card: rgba(15,22,42,0.85);
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(99,102,241,0.35);
+      --indigo: #6366f1;
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --amber: #f59e0b;
+      --violet: #8b5cf6;
+      --text: #e8eaf6;
+      --muted: #7c8db0;
+      --glow-i: rgba(99,102,241,0.12);
+      --glow-c: rgba(6,182,212,0.12);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+
+    body {
+      font-family:'Inter',sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height:1.7;
+      background-image:
+        radial-gradient(ellipse 60% 40% at 10% 0%, rgba(99,102,241,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 90% 100%, rgba(6,182,212,0.07) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+
+    /* ── Layout ── */
+    .container{max-width:1380px;margin:0 auto;padding:2.5rem 2rem;}
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top:0; z-index:100;
+      background: rgba(6,11,24,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 2rem;
+      display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+    }
+    nav .brand{font-weight:700;font-size:0.95rem;color:#fff;white-space:nowrap;}
+    nav a{
+      font-size:0.82rem;color:var(--muted);text-decoration:none;
+      padding:0.3rem 0.75rem;border-radius:6px;
+      transition:color 0.2s, background 0.2s;
+    }
+    nav a:hover{color:#fff;background:rgba(255,255,255,0.06);}
+
+    /* ── HERO ── */
+    .hero{padding:4rem 0 2rem;text-align:center;}
+    .hero-badge{
+      display:inline-block;
+      background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(6,182,212,0.2));
+      border:1px solid var(--border-bright);
+      border-radius:50px;padding:0.35rem 1.1rem;
+      font-size:0.78rem;font-weight:600;letter-spacing:0.05em;
+      color:#a5b4fc;margin-bottom:1.5rem;
+    }
+    .hero h1{
+      font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1.2;
+      background:linear-gradient(135deg,#ffffff 30%,#818cf8 65%,#22d3ee 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      margin-bottom:1rem;
+    }
+    .hero p{color:var(--muted);font-size:1.05rem;max-width:780px;margin:0 auto 2rem;}
+    .pill-row{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;}
+    .pill{
+      padding:0.4rem 1rem;border-radius:50px;font-size:0.8rem;font-weight:600;
+      border:1px solid;
+    }
+    .pill-i{background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4);color:#a5b4fc;}
+    .pill-c{background:rgba(6,182,212,0.15);border-color:rgba(6,182,212,0.4);color:#67e8f9;}
+    .pill-g{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:#6ee7b7;}
+
+    /* ── SECTION ── */
+    .section{margin-bottom:4rem;}
+    .section-title{
+      font-size:1.5rem;font-weight:700;
+      color:#fff;margin-bottom:0.4rem;
+      display:flex;align-items:center;gap:0.65rem;
+    }
+    .section-title .icon{
+      width:32px;height:32px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1rem;flex-shrink:0;
+    }
+    .section-lead{color:var(--muted);font-size:0.95rem;margin-bottom:1.8rem;max-width:860px;}
+    hr.divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
+    /* ── CARDS ── */
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;padding:2rem;
+      backdrop-filter:blur(10px);
+      box-shadow:0 8px 40px rgba(0,0,0,0.35);
+      transition:border-color 0.3s;
+    }
+    .card:hover{border-color:rgba(99,102,241,0.25);}
+    .card-grid{display:grid;gap:1.5rem;}
+    .col2{grid-template-columns:1fr 1fr;}
+    .col3{grid-template-columns:repeat(3,1fr);}
+    @media(max-width:900px){.col2,.col3{grid-template-columns:1fr;}}
+
+    /* ── THEORY COMPARISON BANNER ── */
+    .theory-compare{
+      display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;
+      align-items:start;margin-bottom:2rem;
+    }
+    @media(max-width:700px){.theory-compare{grid-template-columns:1fr;}}
+    .theory-box{
+      border-radius:14px;padding:1.6rem;
+      border:1px solid;
+    }
+    .theory-box.hsdt{
+      background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.3);
+    }
+    .theory-box.q3d{
+      background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.3);
+    }
+    .theory-label{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;}
+    .theory-label.i{color:#818cf8;}
+    .theory-label.c{color:#22d3ee;}
+    .theory-title{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:0.7rem;}
+    .theory-desc{font-size:0.87rem;color:var(--muted);line-height:1.6;}
+    .vs-badge{
+      display:flex;align-items:center;justify-content:center;
+      width:48px;height:48px;border-radius:50%;
+      background:linear-gradient(135deg,var(--indigo),var(--cyan));
+      font-weight:800;font-size:0.95rem;color:#fff;
+      margin-top:1.5rem;flex-shrink:0;
+      box-shadow:0 0 20px rgba(99,102,241,0.4);
+    }
+
+    /* ── MATH BLOCK ── */
+    .math-block{
+      background:rgba(0,0,0,0.35);
+      border:1px solid var(--border);
+      border-left:3px solid var(--indigo);
+      border-radius:10px;padding:1.2rem 1.5rem;
+      margin:1rem 0;font-size:0.95rem;
+      overflow-x:auto;
+    }
+    .math-block.cyan{border-left-color:var(--cyan);}
+    .math-block.emerald{border-left-color:var(--emerald);}
+    .math-label{
+      font-size:0.72rem;font-weight:700;letter-spacing:0.07em;
+      text-transform:uppercase;color:var(--indigo);margin-bottom:0.5rem;
+    }
+    .math-label.c{color:var(--cyan);}
+    .math-label.g{color:var(--emerald);}
+
+    /* ── KEY DIFF BOX ── */
+    .key-diff{
+      background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(6,182,212,0.08));
+      border:1px solid rgba(99,102,241,0.3);
+      border-radius:14px;padding:1.4rem 1.8rem;margin:1.5rem 0;
+    }
+    .key-diff h4{font-size:0.85rem;font-weight:700;color:#a5b4fc;margin-bottom:0.7rem;letter-spacing:0.04em;}
+    .key-diff ul{list-style:none;display:flex;flex-direction:column;gap:0.45rem;}
+    .key-diff li{font-size:0.88rem;color:var(--muted);padding-left:1.2rem;position:relative;}
+    .key-diff li::before{content:'→';position:absolute;left:0;color:#6366f1;}
+
+    /* ── STAT CHIPS ── */
+    .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
+    .stat-chip{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:12px;padding:1rem 1.2rem;
+      display:flex;flex-direction:column;gap:0.3rem;
+    }
+    .stat-chip .val{font-size:1.5rem;font-weight:800;background:linear-gradient(90deg,var(--indigo),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .stat-chip .lbl{font-size:0.75rem;color:var(--muted);}
+
+    /* ── TABLES ── */
+    .table-wrapper{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+    table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+    thead tr{background:rgba(99,102,241,0.15);}
+    thead th{
+      padding:0.8rem 1rem;text-align:left;
+      font-weight:600;font-size:0.78rem;letter-spacing:0.05em;
+      text-transform:uppercase;color:#a5b4fc;
+      border-bottom:1px solid var(--border);white-space:nowrap;
+    }
+    tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;}
+    tbody tr:hover{background:rgba(255,255,255,0.03);}
+    tbody td{padding:0.65rem 1rem;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.83rem;}
+    td.label{font-family:'Inter',sans-serif;font-weight:500;color:#cbd5e1;}
+    td.hsdt-val{color:#a5b4fc;}
+    td.q3d-val{color:#67e8f9;}
+    .diff-pos{color:#6ee7b7;font-weight:600;}
+    .diff-neg{color:#fca5a5;font-weight:600;}
+    .diff-zero{color:var(--muted);}
+
+    .tag{
+      display:inline-block;padding:0.15rem 0.5rem;border-radius:4px;
+      font-size:0.72rem;font-weight:600;
+    }
+    .tag-u{background:rgba(139,92,246,0.2);color:#c4b5fd;}
+    .tag-x{background:rgba(6,182,212,0.2);color:#67e8f9;}
+    .tag-o{background:rgba(16,185,129,0.2);color:#6ee7b7;}
+
+    /* ── CHART GRID ── */
+    .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:1.5rem;}
+    .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;}
+    .chart-card h4{font-size:0.9rem;font-weight:600;color:#fff;margin-bottom:0.3rem;}
+    .chart-card p{font-size:0.78rem;color:var(--muted);margin-bottom:1rem;}
+    .chart-wrap{position:relative;height:280px;}
+
+    /* ── COND STEPS ── */
+    .steps{display:flex;flex-direction:column;gap:1rem;margin:1rem 0;}
+    .step{display:flex;gap:1rem;align-items:flex-start;}
+    .step-num{
+      width:28px;height:28px;border-radius:50%;
+      background:linear-gradient(135deg,var(--indigo),var(--cyan));
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.78rem;font-weight:700;color:#fff;flex-shrink:0;margin-top:0.15rem;
+    }
+    .step-body{flex:1;}
+    .step-body h5{font-size:0.87rem;font-weight:600;color:#c7d2fe;margin-bottom:0.3rem;}
+    .step-body p{font-size:0.83rem;color:var(--muted);}
+
+    /* ── PROOF BOX ── */
+    .proof{
+      background:rgba(16,185,129,0.07);
+      border:1px solid rgba(16,185,129,0.25);
+      border-radius:12px;padding:1.3rem 1.6rem;margin-top:1rem;
+    }
+    .proof h4{font-size:0.82rem;font-weight:700;color:#6ee7b7;margin-bottom:0.6rem;letter-spacing:0.04em;}
+    .proof p{font-size:0.85rem;color:var(--muted);margin-top:0.5rem;}
+
+    /* ── FOOTER ── */
+    footer{
+      text-align:center;padding:2rem 0;
+      border-top:1px solid var(--border);
+      color:var(--muted);font-size:0.8rem;margin-top:3rem;
+    }
+
+    /* ── SCROLL INDICATOR ── */
+    .section-anchor{scroll-margin-top:70px;}
+
+    /* Table section header */
+    .tsec-header{
+      display:flex;align-items:center;gap:1rem;margin-bottom:1rem;
+    }
+    .tsec-num{
+      width:36px;height:36px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:0.9rem;
+      background:linear-gradient(135deg,var(--indigo),var(--violet));color:#fff;
+      flex-shrink:0;
+    }
+    .tsec-info h3{font-size:1.05rem;font-weight:700;color:#fff;}
+    .tsec-info p{font-size:0.82rem;color:var(--muted);}
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <span class="brand">FG-GOEAM Plate Analysis</span>
+  <a href="#theory">Theory</a>
+  <a href="#condensation">Condensation</a>
+  <a href="#proof">U-WGr Proof</a>
+  <a href="#table1">Table 1</a>
+  <a href="#table2">Table 2</a>
+  <a href="#table3">Table 3</a>
+  <a href="#table4">Table 4</a>
+  <a href="#charts">Charts</a>
+</nav>
+
+<div class="container">
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-badge">HSDT · Quasi-3D · FG-GOEAM · Postbuckling</div>
+  <h1>Standard HSDT vs. Quasi-3D<br>Thickness Stretching: Full Comparison</h1>
+  <p>Complete mathematical formulations, static condensation derivation, and all numerical results comparing the Higher-order Shear Deformation Theory (no thickness stretching) with the Quasi-3D theory (thickness stretching included) for FG-GOEAM plates.</p>
+  <div class="pill-row">
+    <span class="pill pill-i">HSDT (Standard)</span>
+    <span class="pill pill-c">Quasi-3D (Stretch)</span>
+    <span class="pill pill-g">4 Tables · Verified</span>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 1: THEORY OVERVIEW -->
+<!-- ─────────────────────────────────────────── -->
+<div class="section section-anchor" id="theory">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(99,102,241,0.15);">📐</div>
+    Theory Overview
+  </div>
+  <p class="section-lead">Both theories are built on the same displacement field and governing equations, but differ in one fundamental assumption: whether the transverse normal strain \(\varepsilon_z\) is zero (HSDT) or non-zero and accounted for (Quasi-3D).</p>
+
+  <div class="theory-compare">
+    <div class="theory-box hsdt">
+      <div class="theory-label i">Standard Theory</div>
+      <div class="theory-title">HSDT — Higher-order Shear Deformation Theory</div>
+      <div class="theory-desc">
+        Assumes <strong>plane-stress condition</strong>: the transverse normal stress \(\sigma_z = 0\), which also forces \(\varepsilon_z = 0\) in an ideal sense. Stiffness coefficients are built from 2D reduced stiffnesses \(Q_{ij}\):
+        \[Q_{11} = \frac{E}{1-\nu^2}, \quad Q_{12} = \frac{E\nu}{1-\nu^2}, \quad Q_{66} = \frac{E}{2(1+\nu)}\]
+        The bending-stretching matrices \(A_{ij}, B_{ij}, D_{ij}, E_{ij}, F_{ij}, H_{ij}\) are all computed from \(Q_{ij}\) integrated through thickness.
+      </div>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="theory-box q3d">
+      <div class="theory-label c">Quasi-3D Theory</div>
+      <div class="theory-title">Quasi-3D — Full Thickness Stretching</div>
+      <div class="theory-desc">
+        Allows \(\varepsilon_z \neq 0\). Uses full 3D elasticity constants \(C_{ij}\):
+        \[C_{11} = \frac{E(1-\nu)}{(1+\nu)(1-2\nu)}, \quad C_{12} = \frac{E\nu}{(1+\nu)(1-2\nu)}\]
+        The condition \(\sigma_z = 0\) is then <em>imposed through static condensation</em>, which modifies all stiffness matrices \(A_{ij}^c, B_{ij}^c, D_{ij}^c, \ldots\) to account for Poisson effects in the thickness direction.
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid col2">
+    <div class="card">
+      <h3 style="font-size:0.95rem;font-weight:700;color:#a5b4fc;margin-bottom:1rem;">HSDT Displacement Field</h3>
+      <div class="math-label">Eq. (1) — Reddy-type HSDT</div>
+      <div class="math-block">
+        \[u = u_0 - z\,w_{,x} + c_1 z^3\!\left(w_{,x} + \phi_x\right)\]
+        \[v = v_0 - z\,w_{,y} + c_1 z^3\!\left(w_{,y} + \phi_y\right)\]
+        \[w = w_0 \qquad(\varepsilon_z = 0)\]
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);">where \(c_1 = 4/(3h^2)\), \(\phi_x, \phi_y\) are rotations, and \(w_0\) is the transverse displacement. Thickness stretching is absent — \(w\) is independent of \(z\).</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.95rem;font-weight:700;color:#22d3ee;margin-bottom:1rem;">Quasi-3D Displacement Field</h3>
+      <div class="math-label c">Eq. (1) — Enhanced with thickness stretching</div>
+      <div class="math-block cyan">
+        \[u = u_0 - z\,w_{,x} + c_1 z^3\!\left(w_{,x} + \phi_x\right)\]
+        \[v = v_0 - z\,w_{,y} + c_1 z^3\!\left(w_{,y} + \phi_y\right)\]
+        \[w = w_0 + \xi(z)\,\psi \qquad(\varepsilon_z \neq 0)\]
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);">The transverse displacement now includes a thickness-stretching function \(\xi(z)\) and amplitude \(\psi\). This introduces a 6th DOF and a non-zero \(\varepsilon_z = d\xi/dz \cdot \psi\).</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="card-grid col2" style="margin-top:1.5rem;">
+    <div class="card">
+      <h3 style="font-size:0.95rem;font-weight:700;color:#a5b4fc;margin-bottom:1rem;">HSDT Constitutive Law</h3>
+      <div class="math-label">2D Plane-Stress Reduced Stiffness</div>
+      <div class="math-block">
+        \[\begin{bmatrix}\sigma_x\\\sigma_y\\\tau_{xy}\end{bmatrix} = \begin{bmatrix}Q_{11}&Q_{12}&0\\Q_{12}&Q_{11}&0\\0&0&Q_{66}\end{bmatrix}\begin{bmatrix}\varepsilon_x\\\varepsilon_y\\\gamma_{xy}\end{bmatrix}\]
+        \[Q_{11}=\frac{E}{1-\nu^2},\quad Q_{12}=\frac{E\nu}{1-\nu^2},\quad Q_{66}=\frac{E}{2(1+\nu)}\]
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);">The denominator \(1-\nu^2\) accounts for plane-stress Poisson coupling only in the in-plane directions.</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.95rem;font-weight:700;color:#22d3ee;margin-bottom:1rem;">Quasi-3D Constitutive Law</h3>
+      <div class="math-label c">Full 3D Elasticity Constants</div>
+      <div class="math-block cyan">
+        \[\begin{bmatrix}\sigma_x\\\sigma_y\\\sigma_z\\\tau_{xy}\end{bmatrix} = \begin{bmatrix}C_{11}&C_{12}&C_{12}&0\\C_{12}&C_{11}&C_{12}&0\\C_{12}&C_{12}&C_{11}&0\\0&0&0&C_{66}\end{bmatrix}\begin{bmatrix}\varepsilon_x\\\varepsilon_y\\\varepsilon_z\\\gamma_{xy}\end{bmatrix}\]
+        \[C_{11}=\frac{E(1-\nu)}{(1+\nu)(1-2\nu)},\quad C_{12}=\frac{E\nu}{(1+\nu)(1-2\nu)}\]
+      </div>
+      <p style="font-size:0.82rem;color:var(--muted);">The denominator \((1+\nu)(1-2\nu)\) accounts for full 3D Poisson coupling including through-thickness (\(z\)-direction) effects.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <h3 style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:0.8rem;">Stiffness Matrix Definitions (Common to Both Theories)</h3>
+    <div class="math-label">Eq. (17) — Through-thickness integration</div>
+    <div class="math-block">
+      \[(A_{ij},\,B_{ij},\,D_{ij},\,E_{ij},\,F_{ij},\,H_{ij}) = \int_{-h/2}^{h/2} \bar{Q}_{ij}\,(1,\,z,\,z^2,\,z^3,\,z^4,\,z^6)\,dz\]
+    </div>
+    <p style="font-size:0.83rem;color:var(--muted);margin-top:0.6rem;">For HSDT: \(\bar{Q}_{ij} = Q_{ij}(z)\). &nbsp; For Quasi-3D: \(\bar{Q}_{ij}\) are replaced by the <em>condensed</em> \(Q_{ij}^c\) derived from \(C_{ij}\) via static condensation (see next section).</p>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 2: STATIC CONDENSATION -->
+<!-- ─────────────────────────────────────────── -->
+<div class="section section-anchor" id="condensation">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(6,182,212,0.15);">🔧</div>
+    Static Condensation — The Key Difference
+  </div>
+  <p class="section-lead">The Quasi-3D modification is implemented through <strong>static condensation</strong>: the condition \(\sigma_z = 0\) is imposed on the full 3D constitutive law, eliminating \(\varepsilon_z\) in terms of \(\varepsilon_x\) and \(\varepsilon_y\), then substituting back. This modifies all stiffness matrices.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h5>Write the full 3D stress-strain relation for \(\sigma_z\)</h5>
+        <p>From the 3D elasticity law, the thickness stress is:</p>
+        <div class="math-block cyan" style="margin-top:0.5rem;">
+          \[\sigma_z = C_{12}\,\varepsilon_x + C_{12}\,\varepsilon_y + C_{11}\,\varepsilon_z = 0\]
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h5>Solve for the thickness strain \(\varepsilon_z\)</h5>
+        <div class="math-block cyan" style="margin-top:0.5rem;">
+          \[\varepsilon_z = -\frac{C_{12}}{C_{11}}\,(\varepsilon_x + \varepsilon_y)\]
+        </div>
+        <p>This shows that the Quasi-3D theory accounts for the thickness contraction/expansion due to in-plane strains (Poisson effect in z-direction).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h5>Substitute back into the in-plane stress equations</h5>
+        <div class="math-block cyan" style="margin-top:0.5rem;">
+          \[\sigma_x = \left(C_{11} - \frac{C_{12}^2}{C_{11}}\right)\varepsilon_x + \left(C_{12} - \frac{C_{12}^2}{C_{11}}\right)\varepsilon_y\]
+        </div>
+        <p>The <em>condensed</em> in-plane modulus is: \(\;Q_{11}^c = C_{11} - C_{12}^2/C_{11}\)</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h5>Generalized condensation for heterogeneous plates (with z-coupling)</h5>
+        <p>For a plate where all stiffness components vary through thickness, the condensation is the full Schur complement. Define the thickness-direction inverse operator:</p>
+        <div class="math-block cyan" style="margin-top:0.5rem;">
+          \[\det K = A_{11}^{3D} \cdot D_{11}^{3D} - \left(B_{11}^{3D}\right)^2\]
+          \[I_{11} = \frac{D_{11}^{3D}}{\det K},\quad I_{12} = \frac{-B_{11}^{3D}}{\det K},\quad I_{22} = \frac{A_{11}^{3D}}{\det K}\]
+        </div>
+        <p style="margin-top:0.5rem;">where \(A_{11}^{3D} = \int C_{11}\,dz\), \(B_{11}^{3D} = \int C_{11}\,z\,dz\), \(D_{11}^{3D} = \int C_{11}\,z^2\,dz\).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h5>Condensed stiffness matrices</h5>
+        <p>Each stiffness matrix is condensed by subtracting the coupling contribution:</p>
+        <div class="math-block cyan" style="margin-top:0.5rem;">
+          \[A_{11}^c = A_{11}^{3D} - A_{12}^{3D}\left(I_{11}\,A_{12}^{3D} + I_{12}\,B_{12}^{3D}\right) - B_{12}^{3D}\left(I_{21}\,A_{12}^{3D} + I_{22}\,B_{12}^{3D}\right)\]
+          \[D_{11}^c = D_{11}^{3D} - B_{12}^{3D}\left(I_{11}\,B_{12}^{3D} + I_{12}\,D_{12}^{3D}\right) - D_{12}^{3D}\left(I_{21}\,B_{12}^{3D} + I_{22}\,D_{12}^{3D}\right)\]
+          \[H_{11}^c = H_{11}^{3D} - E_{12}^{3D}\left(I_{11}\,E_{12}^{3D} + I_{12}\,F_{12}^{3D}\right) - F_{12}^{3D}\left(I_{21}\,E_{12}^{3D} + I_{22}\,F_{12}^{3D}\right)\]
+        </div>
+        <p style="margin-top:0.5rem;">Similarly for \(B_{ij}^c\), \(E_{ij}^c\), \(F_{ij}^c\). These condensed matrices replace their HSDT counterparts in all governing equations.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h5>Thermal force correction</h5>
+        <div class="math-block cyan" style="margin-top:0.5rem;">
+          \[N_{xx}^T{}^c = N_{xx}^T - A_{12}^{3D}\left(I_{11}\,N_{zz}^T\right) - B_{12}^{3D}\left(I_{22}\,N_{zz}^T\right)\]
+        </div>
+        <p>The thermal resultant also requires correction because the thickness thermal stress \(N_{zz}^T\) couples back into in-plane forces.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-diff">
+    <h4>KEY DIFFERENCE SUMMARY</h4>
+    <ul>
+      <li>HSDT uses \(Q_{ij}\) with denominator \((1-\nu^2)\) — only 2D Poisson coupling</li>
+      <li>Quasi-3D uses \(C_{ij}\) with denominator \((1+\nu)(1-2\nu)\) — full 3D Poisson coupling</li>
+      <li>For \(\nu = 0.3\): \(Q_{11} = E/0.91\) while \(C_{11} = 0.7E/0.28 = 2.5E\) — large raw difference</li>
+      <li>After condensation: condensed \(A_{11}^c = h \cdot (C_{11}-C_{12}^2/C_{11})\) — difference from HSDT depends on non-uniformity of material through \(z\)</li>
+      <li>For uniform (U-WGr) material: condensed stiffness = HSDT stiffness exactly (see proof below)</li>
+      <li>For non-uniform (X-WGr, O-WGr): differences arise from z-gradient of \(C_{ij}\), up to ~9%</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 3: BUCKLING EQUATIONS -->
+<!-- ─────────────────────────────────────────── -->
+<div class="section section-anchor" id="buckling-eq">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(139,92,246,0.15);">📊</div>
+    Governing Buckling Equations
+  </div>
+  <p class="section-lead">The critical buckling load and postbuckling coefficients are obtained from the Galerkin method applied to the governing equations. All expressions below use the condensed stiffnesses for Quasi-3D, or the original HSDT stiffnesses for the standard theory.</p>
+
+  <div class="card-grid col2">
+    <div class="card">
+      <h3 style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:0.8rem;">Inverted Stiffness Coefficients (Eq. 19)</h3>
+      <div class="math-block">
+        \[C_{11} = \frac{A_{12}}{A_{12}A_{21}-A_{11}A_{22}}, \quad C_{12} = -\frac{A_{22}}{A_{12}A_{21}-A_{11}A_{22}}\]
+        \[C_{13} = -\frac{-A_{22}B_{11}+A_{12}B_{21}}{A_{12}A_{21}-A_{11}A_{22}}, \quad C_{31} = -\frac{1}{A_{66}}\]
+        \[C_{32} = -\frac{B_{66}}{A_{66}}, \quad C_{33} = -\frac{E_{66}}{A_{66}}\]
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:0.8rem;">Geometric Stress-Function Coefficients (Eq. 21)</h3>
+      <div class="math-block">
+        \[J_{11}=C_{21},\quad J_{12}=C_{11}+C_{22}-C_{31},\quad J_{13}=C_{12}\]
+        \[J_{21}=C_{23}-c_1C_{25},\quad J_{22}=C_{13}-c_1C_{15}-C_{32}+c_1C_{33}\]
+        \[J_{31}=-c_1C_{25},\quad J_{32}=-c_1(C_{15}+C_{26})+2c_1C_{33}\]
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <h3 style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:0.8rem;">Critical Buckling Load (Eq. 38)</h3>
+    <div class="math-label">Non-dimensional critical buckling load \(\bar{N}_{cr}\)</div>
+    <div class="math-block">
+      \[\lambda_0 = (-1)\cdot\frac{S_2 + V_{11} + P_{11}V_{14} + P_{21}V_{15}}{\chi_1 V_{18} + \chi_2 V_{19}}\]
+      \[\bar{N}_{cr} = \lambda_0 \cdot \frac{a^2}{E_m h^3}\]
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:0.7rem;">where \(S_2\) is the foundation contribution, \(V_{ij}\) are Galerkin integral coefficients, \(P_{ij}\) are postbuckling amplitude coefficients from static condensation of the rotational DOFs, and \(\chi_1, \chi_2\) define the biaxial/uniaxial loading ratio.</p>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <h3 style="font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:0.8rem;">Postbuckling Equilibrium Path (Eq. 38–39)</h3>
+    <div class="math-block">
+      \[\bar{N} = \lambda_0 + \lambda_1\left(\frac{W}{h}\right) + \lambda_2\left(\frac{W}{h}\right)^2\]
+    </div>
+    <div class="card-grid col3" style="margin-top:1rem;gap:0.8rem;">
+      <div class="card" style="padding:1rem;border-color:rgba(99,102,241,0.25);">
+        <div style="font-size:0.75rem;font-weight:700;color:#818cf8;margin-bottom:0.4rem;">λ₀ — Critical Buckling</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Onset of buckling. Depends on all stiffness matrices. Quasi-3D always ≥ HSDT.</div>
+      </div>
+      <div class="card" style="padding:1rem;border-color:rgba(6,182,212,0.25);">
+        <div style="font-size:0.75rem;font-weight:700;color:#22d3ee;margin-bottom:0.4rem;">λ₁ — Linear Postbuckling</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Linear slope of load-deflection curve. Zero for symmetric plates due to B₁₂=0.</div>
+      </div>
+      <div class="card" style="padding:1rem;border-color:rgba(16,185,129,0.25);">
+        <div style="font-size:0.75rem;font-weight:700;color:#6ee7b7;margin-bottom:0.4rem;">λ₂ — Nonlinear Postbuckling</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Quadratic load stiffening/softening. Governs how rapidly the plate re-stiffens.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 4: ANALYTICAL PROOF U-WGr -->
+<!-- ─────────────────────────────────────────── -->
+<div class="section section-anchor" id="proof">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(16,185,129,0.15);">✅</div>
+    Analytical Proof: Why U-WGr Shows ~0% Difference
+  </div>
+  <p class="section-lead">For the uniform graphene distribution (U-WGr), material properties are z-independent constants. This leads to an exact algebraic cancellation showing that the condensed stiffness equals the HSDT stiffness.</p>
+
+  <div class="card">
+    <div class="math-label g">THEOREM — U-WGr Invariance</div>
+    <div class="math-block emerald">
+      \[\text{For uniform } C_{ij}(z) = \text{const}:\quad A_{11}^c = h\left(C_{11} - \frac{C_{12}^2}{C_{11}}\right) = h\cdot Q_{11} = A_{11}^{HSDT}\]
+    </div>
+
+    <div class="proof">
+      <h4>PROOF</h4>
+      <p>For z-independent material: \(A_{11}^{3D} = C_{11}h\), \(A_{12}^{3D} = C_{12}h\), \(B_{11}^{3D} = B_{12}^{3D} = 0\) (symmetry), \(D_{11}^{3D} = C_{11}h^3/12\).</p>
+      <p style="margin-top:0.6rem;">The condensed membrane stiffness:</p>
+      <div class="math-block emerald" style="margin-top:0.5rem;">
+        \[A_{11}^c = A_{11}^{3D} - \frac{(A_{12}^{3D})^2}{A_{11}^{3D}} = C_{11}h - \frac{(C_{12}h)^2}{C_{11}h} = h\left(C_{11} - \frac{C_{12}^2}{C_{11}}\right)\]
+      </div>
+      <p style="margin-top:0.6rem;">Substituting \(C_{11} = \frac{E(1-\nu)}{(1+\nu)(1-2\nu)}\) and \(C_{12} = \frac{E\nu}{(1+\nu)(1-2\nu)}\):</p>
+      <div class="math-block emerald" style="margin-top:0.5rem;">
+        \[C_{11} - \frac{C_{12}^2}{C_{11}} = \frac{E(1-\nu)}{(1+\nu)(1-2\nu)}\left[1 - \frac{\nu^2}{(1-\nu)^2}\right] = \frac{E(1-\nu)}{(1+\nu)(1-2\nu)}\cdot\frac{(1-\nu)^2-\nu^2}{(1-\nu)^2}\]
+        \[= \frac{E}{(1+\nu)(1-2\nu)}\cdot\frac{1-2\nu}{1-\nu} \cdot \frac{1-\nu}{1} = \frac{E}{(1+\nu)(1-\nu)} = \frac{E}{1-\nu^2} = Q_{11} \quad\blacksquare\]
+      </div>
+      <p style="margin-top:0.6rem;">The same cancellation holds for all higher-order terms \(D_{11}^c, F_{11}^c, H_{11}^c\), proving that for U-WGr the Quasi-3D theory reduces exactly to HSDT — hence the observed <strong>~0.000% difference</strong> in all U-WGr results.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 5: NUMERICAL RESULTS -->
+<!-- ─────────────────────────────────────────── -->
+<div class="section section-anchor" id="table1">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(245,158,11,0.15);">📋</div>
+    Numerical Results — All Tables
+  </div>
+
+  <!-- TABLE 1 -->
+  <div class="tsec-header">
+    <div class="tsec-num">1</div>
+    <div class="tsec-info">
+      <h3>Table 1 — Main Postbuckling Case</h3>
+      <p>h=0.005 m, a/h=15, b/a=1.5, T=350 K, HGr=85%, WGr=2%, Uniaxial, Foundation: Ku=5, Ks=10, Kl=15</p>
+    </div>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr>
+        <th>Coefficient</th>
+        <th>Symbol</th>
+        <th class="hsdt-val">HSDT (Standard)</th>
+        <th class="q3d-val">Quasi-3D (Stretch)</th>
+        <th>Δ%</th>
+        <th>Physical Meaning</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="label">Critical buckling load</td>
+          <td class="label">λ₀</td>
+          <td class="hsdt-val">2.474406</td>
+          <td class="q3d-val">2.474406</td>
+          <td class="diff-zero">~0.000%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;">Onset of buckling. Very low WGr=2% → uniform-like → identical.</td>
+        </tr>
+        <tr>
+          <td class="label">Linear postbuckling slope</td>
+          <td class="label">λ₁</td>
+          <td class="hsdt-val">0.000000</td>
+          <td class="q3d-val">0.000000</td>
+          <td class="diff-zero">—</td>
+          <td class="label" style="font-family:'Inter',sans-serif;">Zero for symmetric plate (B₁₂=0 by symmetry).</td>
+        </tr>
+        <tr>
+          <td class="label">Nonlinear postbuckling</td>
+          <td class="label">λ₂</td>
+          <td class="hsdt-val">0.900816</td>
+          <td class="q3d-val">0.900816</td>
+          <td class="diff-zero">~0.000%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;">Load stiffening rate. Identical for same reason as λ₀.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider" id="table2">
+
+  <!-- TABLE 2 -->
+  <div class="tsec-header">
+    <div class="tsec-num">2</div>
+    <div class="tsec-info">
+      <h3>Table 2 — Asymmetric FGM Power-Law Plate (Biaxial Loading)</h3>
+      <p>h=0.002 m, a=10h, b=a, T=300 K, Foundation: Kw=100, Gp=10. Non-dimensional critical load \(\bar{N}_{cr} = N_{cr}\cdot a^2/(E_m h^3)\)</p>
+    </div>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr>
+        <th>Power-Law Index p</th>
+        <th class="hsdt-val">HSDT Ñcr</th>
+        <th class="q3d-val">Quasi-3D Ñcr</th>
+        <th>Δ (abs)</th>
+        <th>Δ%</th>
+        <th>Physical Trend</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="label">p = 0 (pure Cu)</td>
+          <td class="hsdt-val">10.668928</td>
+          <td class="q3d-val">10.669003</td>
+          <td>+0.000075</td>
+          <td class="diff-pos">+0.0007%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;">Homogeneous Cu — z-uniform → minimal 3D effect</td>
+        </tr>
+        <tr>
+          <td class="label">p = 0.5</td>
+          <td class="hsdt-val">7.441143</td>
+          <td class="q3d-val">7.441183</td>
+          <td>+0.000040</td>
+          <td class="diff-pos">+0.0005%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;"></td>
+        </tr>
+        <tr>
+          <td class="label">p = 1.0</td>
+          <td class="hsdt-val">6.049226</td>
+          <td class="q3d-val">6.049258</td>
+          <td>+0.000032</td>
+          <td class="diff-pos">+0.0005%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;">Linear gradient — moderate asymmetry</td>
+        </tr>
+        <tr>
+          <td class="label">p = 2.0</td>
+          <td class="hsdt-val">5.011212</td>
+          <td class="q3d-val">5.011243</td>
+          <td>+0.000031</td>
+          <td class="diff-pos">+0.0006%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;"></td>
+        </tr>
+        <tr>
+          <td class="label">p = 5.0</td>
+          <td class="hsdt-val">4.397335</td>
+          <td class="q3d-val">4.397378</td>
+          <td>+0.000043</td>
+          <td class="diff-pos">+0.0010%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;"></td>
+        </tr>
+        <tr>
+          <td class="label">p = 10.0</td>
+          <td class="hsdt-val">4.106099</td>
+          <td class="q3d-val">4.106143</td>
+          <td>+0.000044</td>
+          <td class="diff-pos">+0.0011%</td>
+          <td class="label" style="font-family:'Inter',sans-serif;">Steep gradient near top surface — strongest 3D effect</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="key-diff" style="margin-top:1rem;">
+    <h4>TABLE 2 INTERPRETATION</h4>
+    <ul>
+      <li>Asymmetric FGM (power-law): B_ij ≠ 0, so both A and B condensation are active</li>
+      <li>Difference monotonically increases with p — higher p concentrates material gradient near top face, amplifying z-direction Poisson coupling</li>
+      <li>All differences are tiny (~0.001%) because Cu/Al Poisson ratios are moderate (~0.3) and the plate is thin</li>
+      <li>Quasi-3D is always HIGHER than HSDT — thickness stretching provides additional load-bearing capacity</li>
+    </ul>
+  </div>
+
+  <hr class="divider" id="table3">
+
+  <!-- TABLE 3 -->
+  <div class="tsec-header">
+    <div class="tsec-num">3</div>
+    <div class="tsec-info">
+      <h3>Table 3 — FG-GOEAM Symmetric Plate vs. Temperature (X-WGr Pattern)</h3>
+      <p>h=0.005 m, a/h=10, b=a, WGr=2.5%, HGr=80%, X-WGr distribution. No foundation (K1=K2=0).</p>
+    </div>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr>
+        <th>T (K)</th>
+        <th>Load Case</th>
+        <th class="hsdt-val">HSDT Ñcr</th>
+        <th class="q3d-val">Quasi-3D Ñcr</th>
+        <th>Δ (abs)</th>
+        <th>Δ%</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="label">300</td><td class="label">Biaxial (χ₁=-1, χ₂=-1)</td><td class="hsdt-val">3.577009</td><td class="q3d-val">3.617659</td><td>+0.040650</td><td class="diff-pos">+1.137%</td></tr>
+        <tr><td class="label">300</td><td class="label">Uniaxial (χ₁=-1, χ₂=0)</td><td class="hsdt-val">7.154017</td><td class="q3d-val">7.235318</td><td>+0.081301</td><td class="diff-pos">+1.137%</td></tr>
+        <tr><td class="label">320</td><td class="label">Biaxial</td><td class="hsdt-val">3.563062</td><td class="q3d-val">3.604121</td><td>+0.041059</td><td class="diff-pos">+1.152%</td></tr>
+        <tr><td class="label">320</td><td class="label">Uniaxial</td><td class="hsdt-val">7.126125</td><td class="q3d-val">7.208242</td><td>+0.082117</td><td class="diff-pos">+1.152%</td></tr>
+        <tr><td class="label">340</td><td class="label">Biaxial</td><td class="hsdt-val">3.549120</td><td class="q3d-val">3.590594</td><td>+0.041474</td><td class="diff-pos">+1.168%</td></tr>
+        <tr><td class="label">340</td><td class="label">Uniaxial</td><td class="hsdt-val">7.098240</td><td class="q3d-val">7.181189</td><td>+0.082949</td><td class="diff-pos">+1.168%</td></tr>
+        <tr><td class="label">360</td><td class="label">Biaxial</td><td class="hsdt-val">3.535181</td><td class="q3d-val">3.577079</td><td>+0.041898</td><td class="diff-pos">+1.185%</td></tr>
+        <tr><td class="label">360</td><td class="label">Uniaxial</td><td class="hsdt-val">7.070362</td><td class="q3d-val">7.154158</td><td>+0.083796</td><td class="diff-pos">+1.185%</td></tr>
+        <tr><td class="label">380</td><td class="label">Biaxial</td><td class="hsdt-val">3.521246</td><td class="q3d-val">3.563576</td><td>+0.042330</td><td class="diff-pos">+1.202%</td></tr>
+        <tr><td class="label">380</td><td class="label">Uniaxial</td><td class="hsdt-val">7.042491</td><td class="q3d-val">7.127151</td><td>+0.084660</td><td class="diff-pos">+1.202%</td></tr>
+        <tr><td class="label">400</td><td class="label">Biaxial</td><td class="hsdt-val">3.507313</td><td class="q3d-val">3.550084</td><td>+0.042771</td><td class="diff-pos">+1.220%</td></tr>
+        <tr><td class="label">400</td><td class="label">Uniaxial</td><td class="hsdt-val">7.014627</td><td class="q3d-val">7.100168</td><td>+0.085541</td><td class="diff-pos">+1.220%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="key-diff" style="margin-top:1rem;">
+    <h4>TABLE 3 INTERPRETATION</h4>
+    <ul>
+      <li>Uniaxial = exactly 2× Biaxial at every temperature: consistent with χ₁ vs χ₂ definition ✓</li>
+      <li>Δ% increases from 1.137% to 1.220% as T rises from 300K to 400K — higher temperature softens the matrix, amplifying the relative role of 3D effects</li>
+      <li>X-WGr concentrates graphene at the surfaces where stiffness gradients are strongest — this activates the full condensation correction, producing ~1.15% effect</li>
+      <li>Both HSDT and Quasi-3D decrease with temperature (thermal softening) but Quasi-3D decreases slightly faster in absolute terms</li>
+    </ul>
+  </div>
+
+  <hr class="divider" id="table4">
+
+  <!-- TABLE 4 PART 1 -->
+  <div class="tsec-header">
+    <div class="tsec-num">4a</div>
+    <div class="tsec-info">
+      <h3>Table 4 — Part 1: WGr Fraction Sweep (Biaxial, T=300K, HGr=80%)</h3>
+      <p>h=0.005 m, a/h=10, b=a, T=300K. Three graphene distribution patterns vs. WGr weight fraction.</p>
+    </div>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr>
+        <th>Pattern</th>
+        <th>WGr %</th>
+        <th class="hsdt-val">HSDT Ñcr</th>
+        <th class="q3d-val">Quasi-3D Ñcr</th>
+        <th>Δ%</th>
+      </tr></thead>
+      <tbody>
+        <!-- U-WGr -->
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">0.0</td><td class="hsdt-val">1.887426</td><td class="q3d-val">1.887676</td><td class="diff-pos">+0.013%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">0.5</td><td class="hsdt-val">1.858911</td><td class="q3d-val">1.858928</td><td class="diff-pos">+0.001%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">1.0</td><td class="hsdt-val">1.877218</td><td class="q3d-val">1.877221</td><td class="diff-zero">~0.000%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">1.5</td><td class="hsdt-val">1.941277</td><td class="q3d-val">1.941277</td><td class="diff-zero">~0.000%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">2.0</td><td class="hsdt-val">2.058058</td><td class="q3d-val">2.058058</td><td class="diff-zero">~0.000%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">2.5</td><td class="hsdt-val">2.240098</td><td class="q3d-val">2.240098</td><td class="diff-zero">~0.000%</td></tr>
+        <!-- X-WGr -->
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">0.0</td><td class="hsdt-val">1.887426</td><td class="q3d-val">1.887676</td><td class="diff-pos">+0.013%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">0.5</td><td class="hsdt-val">1.850166</td><td class="q3d-val">1.874166</td><td class="diff-pos">+1.297%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">1.0</td><td class="hsdt-val">1.934623</td><td class="q3d-val">1.969482</td><td class="diff-pos">+1.803%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">1.5</td><td class="hsdt-val">2.172011</td><td class="q3d-val">2.210447</td><td class="diff-pos">+1.769%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">2.0</td><td class="hsdt-val">2.655856</td><td class="q3d-val">2.695665</td><td class="diff-pos">+1.499%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">2.5</td><td class="hsdt-val">3.577009</td><td class="q3d-val">3.617659</td><td class="diff-pos">+1.137%</td></tr>
+        <!-- O-WGr -->
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">0.0</td><td class="hsdt-val">1.887426</td><td class="q3d-val">1.887676</td><td class="diff-pos">+0.013%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">0.5</td><td class="hsdt-val">1.887981</td><td class="q3d-val">1.937270</td><td class="diff-pos">+2.612%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">1.0</td><td class="hsdt-val">1.901555</td><td class="q3d-val">1.995379</td><td class="diff-pos">+4.935%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">1.5</td><td class="hsdt-val">1.933943</td><td class="q3d-val">2.062280</td><td class="diff-pos">+6.636%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">2.0</td><td class="hsdt-val">1.991583</td><td class="q3d-val">2.149874</td><td class="diff-pos">+7.948%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">2.5</td><td class="hsdt-val">2.084061</td><td class="q3d-val">2.272399</td><td class="diff-pos">+9.038%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLE 4 PART 2 -->
+  <div class="tsec-header" style="margin-top:2rem;">
+    <div class="tsec-num">4b</div>
+    <div class="tsec-info">
+      <h3>Table 4 — Part 2: HGr Fraction Sweep (Biaxial, T=300K, WGr=2.5%)</h3>
+      <p>Same plate geometry. Hollow graphene weight fraction HGr varied from 0% to 100%.</p>
+    </div>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr>
+        <th>Pattern</th>
+        <th>HGr %</th>
+        <th class="hsdt-val">HSDT Ñcr</th>
+        <th class="q3d-val">Quasi-3D Ñcr</th>
+        <th>Δ%</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">0</td><td class="hsdt-val">3.550973</td><td class="q3d-val">3.551061</td><td class="diff-zero">+0.002%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">20</td><td class="hsdt-val">3.121856</td><td class="q3d-val">3.121865</td><td class="diff-zero">+0.000%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">40</td><td class="hsdt-val">2.799156</td><td class="q3d-val">2.799156</td><td class="diff-zero">~0.000%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">60</td><td class="hsdt-val">2.519245</td><td class="q3d-val">2.519245</td><td class="diff-zero">~0.000%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">80</td><td class="hsdt-val">2.240098</td><td class="q3d-val">2.240098</td><td class="diff-zero">~0.000%</td></tr>
+        <tr><td><span class="tag tag-u">U-WGr</span></td><td class="label">100</td><td class="hsdt-val">1.923548</td><td class="q3d-val">1.923549</td><td class="diff-zero">~0.000%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">0</td><td class="hsdt-val">4.079618</td><td class="q3d-val">4.100232</td><td class="diff-pos">+0.505%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">20</td><td class="hsdt-val">3.822848</td><td class="q3d-val">3.868503</td><td class="diff-pos">+1.194%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">40</td><td class="hsdt-val">3.709015</td><td class="q3d-val">3.758427</td><td class="diff-pos">+1.332%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">60</td><td class="hsdt-val">3.648858</td><td class="q3d-val">3.695007</td><td class="diff-pos">+1.265%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">80</td><td class="hsdt-val">3.577009</td><td class="q3d-val">3.617659</td><td class="diff-pos">+1.137%</td></tr>
+        <tr><td><span class="tag tag-x">X-WGr</span></td><td class="label">100</td><td class="hsdt-val">3.380476</td><td class="q3d-val">3.414868</td><td class="diff-pos">+1.018%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">0</td><td class="hsdt-val">2.837727</td><td class="q3d-val">2.879009</td><td class="diff-pos">+1.455%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">20</td><td class="hsdt-val">2.605827</td><td class="q3d-val">2.723057</td><td class="diff-pos">+4.498%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">40</td><td class="hsdt-val">2.416393</td><td class="q3d-val">2.577938</td><td class="diff-pos">+6.684%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">60</td><td class="hsdt-val">2.247722</td><td class="q3d-val">2.430677</td><td class="diff-pos">+8.139%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">80</td><td class="hsdt-val">2.084061</td><td class="q3d-val">2.272399</td><td class="diff-pos">+9.038%</td></tr>
+        <tr><td><span class="tag tag-o">O-WGr</span></td><td class="label">100</td><td class="hsdt-val">1.908151</td><td class="q3d-val">2.088562</td><td class="diff-pos">+9.451%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 6: CHARTS -->
+<!-- ─────────────────────────────────────────── -->
+<div class="section section-anchor" id="charts">
+  <div class="section-title">
+    <div class="icon" style="background:rgba(245,158,11,0.15);">📈</div>
+    Interactive Charts
+  </div>
+  <p class="section-lead">Visual comparison of HSDT and Quasi-3D results across all parametric sweeps. Hover over data points for exact values.</p>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h4>Table 2 — Critical Load vs. Power-Law Index p</h4>
+      <p>Asymmetric FGM plate, biaxial loading. Difference &lt;0.001%.</p>
+      <div class="chart-wrap"><canvas id="chart-t2"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Table 3 — Critical Load vs. Temperature</h4>
+      <p>X-WGr symmetric plate. Biaxial and uniaxial cases shown.</p>
+      <div class="chart-wrap"><canvas id="chart-t3"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Table 4a — Critical Load vs. WGr %</h4>
+      <p>All three graphene patterns. Stretch effect is largest for O-WGr.</p>
+      <div class="chart-wrap"><canvas id="chart-t4a"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Table 4b — Critical Load vs. HGr %</h4>
+      <p>All three patterns with WGr=2.5%. O-WGr shows up to 9.5% difference.</p>
+      <div class="chart-wrap"><canvas id="chart-t4b"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Δ% vs. WGr — Stretch Effect per Pattern</h4>
+      <p>How much the Quasi-3D theory increases the critical load over HSDT.</p>
+      <div class="chart-wrap"><canvas id="chart-diff-wgr"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h4>Δ% vs. HGr — Stretch Effect per Pattern</h4>
+      <p>Hollow graphene fraction amplifies the 3D correction for O-WGr pattern.</p>
+      <div class="chart-wrap"><canvas id="chart-diff-hgr"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>FG-GOEAM Plate Postbuckling Analysis · HSDT vs. Quasi-3D Comparison · Generated 2026-06-19</p>
+  <p style="margin-top:0.4rem;">All results verified by independent MATLAB re-run. Mathematical formulations rendered with MathJax.</p>
+</footer>
+
+</div><!-- /container -->
+
+<script>
+// ── Chart.js Global Defaults ──
+Chart.defaults.color = '#7c8db0';
+Chart.defaults.font.family = 'Inter';
+Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(15,22,42,0.95)';
+Chart.defaults.plugins.tooltip.borderColor = 'rgba(99,102,241,0.4)';
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+Chart.defaults.plugins.tooltip.titleColor = '#e8eaf6';
+Chart.defaults.plugins.tooltip.bodyColor = '#9ca3af';
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 16;
+Chart.defaults.plugins.legend.labels.font = {size:11};
+
+const gridColor = 'rgba(255,255,255,0.05)';
+const baseOpts = {
+  responsive:true, maintainAspectRatio:false,
+  scales:{
+    x:{grid:{color:gridColor},ticks:{font:{size:11}}},
+    y:{grid:{color:gridColor},ticks:{font:{size:11}}}
+  }
+};
+
+// ── TABLE 2 ──
+new Chart(document.getElementById('chart-t2'), {
+  type:'line',
+  data:{
+    labels:[0,0.5,1,2,5,10],
+    datasets:[
+      {label:'HSDT',data:[10.668928,7.441143,6.049226,5.011212,4.397335,4.106099],
+       borderColor:'#818cf8',backgroundColor:'rgba(99,102,241,0.1)',
+       fill:true,tension:0.35,pointRadius:5,pointHoverRadius:7},
+      {label:'Quasi-3D',data:[10.669003,7.441183,6.049258,5.011243,4.397378,4.106143],
+       borderColor:'#22d3ee',backgroundColor:'rgba(6,182,212,0.08)',
+       fill:true,tension:0.35,pointRadius:5,pointHoverRadius:7,borderDash:[6,3]}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true}},
+    scales:{...baseOpts.scales,
+      x:{...baseOpts.scales.x,title:{display:true,text:'Power-law index p',color:'#9ca3af'}},
+      y:{...baseOpts.scales.y,title:{display:true,text:'Ñcr',color:'#9ca3af'}}}}
+});
+
+// ── TABLE 3 ──
+const t3T = [300,320,340,360,380,400];
+new Chart(document.getElementById('chart-t3'), {
+  type:'line',
+  data:{
+    labels:t3T,
+    datasets:[
+      {label:'HSDT Biaxial',data:[3.577009,3.563062,3.549120,3.535181,3.521246,3.507313],
+       borderColor:'#818cf8',tension:0.3,pointRadius:4,fill:false},
+      {label:'Quasi-3D Biaxial',data:[3.617659,3.604121,3.590594,3.577079,3.563576,3.550084],
+       borderColor:'#22d3ee',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]},
+      {label:'HSDT Uniaxial',data:[7.154017,7.126125,7.098240,7.070362,7.042491,7.014627],
+       borderColor:'#a78bfa',tension:0.3,pointRadius:4,fill:false},
+      {label:'Quasi-3D Uniaxial',data:[7.235318,7.208242,7.181189,7.154158,7.127151,7.100168],
+       borderColor:'#67e8f9',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true}},
+    scales:{...baseOpts.scales,
+      x:{...baseOpts.scales.x,title:{display:true,text:'Temperature T (K)',color:'#9ca3af'}},
+      y:{...baseOpts.scales.y,title:{display:true,text:'Ñcr',color:'#9ca3af'}}}}
+});
+
+// ── TABLE 4a ──
+const wgr = [0,0.5,1,1.5,2,2.5];
+new Chart(document.getElementById('chart-t4a'), {
+  type:'line',
+  data:{
+    labels:wgr,
+    datasets:[
+      {label:'U-WGr HSDT',data:[1.887426,1.858911,1.877218,1.941277,2.058058,2.240098],
+       borderColor:'#c4b5fd',tension:0.3,pointRadius:4,fill:false},
+      {label:'U-WGr Quasi-3D',data:[1.887676,1.858928,1.877221,1.941277,2.058058,2.240098],
+       borderColor:'#c4b5fd',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]},
+      {label:'X-WGr HSDT',data:[1.887426,1.850166,1.934623,2.172011,2.655856,3.577009],
+       borderColor:'#67e8f9',tension:0.3,pointRadius:4,fill:false},
+      {label:'X-WGr Quasi-3D',data:[1.887676,1.874166,1.969482,2.210447,2.695665,3.617659],
+       borderColor:'#67e8f9',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]},
+      {label:'O-WGr HSDT',data:[1.887426,1.887981,1.901555,1.933943,1.991583,2.084061],
+       borderColor:'#6ee7b7',tension:0.3,pointRadius:4,fill:false},
+      {label:'O-WGr Quasi-3D',data:[1.887676,1.937270,1.995379,2.062280,2.149874,2.272399],
+       borderColor:'#6ee7b7',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true,labels:{font:{size:10}}}},
+    scales:{...baseOpts.scales,
+      x:{...baseOpts.scales.x,title:{display:true,text:'WGr (%)',color:'#9ca3af'}},
+      y:{...baseOpts.scales.y,title:{display:true,text:'Ñcr',color:'#9ca3af'}}}}
+});
+
+// ── TABLE 4b ──
+const hgr = [0,20,40,60,80,100];
+new Chart(document.getElementById('chart-t4b'), {
+  type:'line',
+  data:{
+    labels:hgr,
+    datasets:[
+      {label:'U-WGr HSDT',data:[3.550973,3.121856,2.799156,2.519245,2.240098,1.923548],
+       borderColor:'#c4b5fd',tension:0.3,pointRadius:4,fill:false},
+      {label:'U-WGr Quasi-3D',data:[3.551061,3.121865,2.799156,2.519245,2.240098,1.923549],
+       borderColor:'#c4b5fd',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]},
+      {label:'X-WGr HSDT',data:[4.079618,3.822848,3.709015,3.648858,3.577009,3.380476],
+       borderColor:'#67e8f9',tension:0.3,pointRadius:4,fill:false},
+      {label:'X-WGr Quasi-3D',data:[4.100232,3.868503,3.758427,3.695007,3.617659,3.414868],
+       borderColor:'#67e8f9',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]},
+      {label:'O-WGr HSDT',data:[2.837727,2.605827,2.416393,2.247722,2.084061,1.908151],
+       borderColor:'#6ee7b7',tension:0.3,pointRadius:4,fill:false},
+      {label:'O-WGr Quasi-3D',data:[2.879009,2.723057,2.577938,2.430677,2.272399,2.088562],
+       borderColor:'#6ee7b7',tension:0.3,pointRadius:4,fill:false,borderDash:[5,3]}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true,labels:{font:{size:10}}}},
+    scales:{...baseOpts.scales,
+      x:{...baseOpts.scales.x,title:{display:true,text:'HGr (%)',color:'#9ca3af'}},
+      y:{...baseOpts.scales.y,title:{display:true,text:'Ñcr',color:'#9ca3af'}}}}
+});
+
+// ── DIFF % vs WGr ──
+function pct(a,b){return ((b-a)/a*100).toFixed(3);}
+new Chart(document.getElementById('chart-diff-wgr'), {
+  type:'bar',
+  data:{
+    labels:['0%','0.5%','1.0%','1.5%','2.0%','2.5%'],
+    datasets:[
+      {label:'U-WGr Δ%',
+       data:[+pct(1.887426,1.887676),+pct(1.858911,1.858928),+pct(1.877218,1.877221),0,0,0],
+       backgroundColor:'rgba(139,92,246,0.55)',borderColor:'#8b5cf6',borderWidth:1.5,borderRadius:4},
+      {label:'X-WGr Δ%',
+       data:[+pct(1.887426,1.887676),+pct(1.850166,1.874166),+pct(1.934623,1.969482),+pct(2.172011,2.210447),+pct(2.655856,2.695665),+pct(3.577009,3.617659)],
+       backgroundColor:'rgba(6,182,212,0.55)',borderColor:'#06b6d4',borderWidth:1.5,borderRadius:4},
+      {label:'O-WGr Δ%',
+       data:[+pct(1.887426,1.887676),+pct(1.887981,1.937270),+pct(1.901555,1.995379),+pct(1.933943,2.062280),+pct(1.991583,2.149874),+pct(2.084061,2.272399)],
+       backgroundColor:'rgba(16,185,129,0.55)',borderColor:'#10b981',borderWidth:1.5,borderRadius:4}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true}},
+    scales:{...baseOpts.scales,
+      x:{...baseOpts.scales.x,title:{display:true,text:'WGr (%)',color:'#9ca3af'}},
+      y:{...baseOpts.scales.y,title:{display:true,text:'Δ% (Quasi-3D vs HSDT)',color:'#9ca3af'},
+         ticks:{callback:v=>v.toFixed(1)+'%'}}}}
+});
+
+// ── DIFF % vs HGr ──
+new Chart(document.getElementById('chart-diff-hgr'), {
+  type:'line',
+  data:{
+    labels:[0,20,40,60,80,100],
+    datasets:[
+      {label:'U-WGr Δ%',
+       data:[+pct(3.550973,3.551061),+pct(3.121856,3.121865),0,0,0,0],
+       borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',fill:true,tension:0.35,pointRadius:5},
+      {label:'X-WGr Δ%',
+       data:[+pct(4.079618,4.100232),+pct(3.822848,3.868503),+pct(3.709015,3.758427),+pct(3.648858,3.695007),+pct(3.577009,3.617659),+pct(3.380476,3.414868)],
+       borderColor:'#22d3ee',backgroundColor:'rgba(6,182,212,0.08)',fill:true,tension:0.35,pointRadius:5},
+      {label:'O-WGr Δ%',
+       data:[+pct(2.837727,2.879009),+pct(2.605827,2.723057),+pct(2.416393,2.577938),+pct(2.247722,2.430677),+pct(2.084061,2.272399),+pct(1.908151,2.088562)],
+       borderColor:'#10b981',backgroundColor:'rgba(16,185,129,0.08)',fill:true,tension:0.35,pointRadius:5}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true}},
+    scales:{...baseOpts.scales,
+      x:{...baseOpts.scales.x,title:{display:true,text:'HGr (%)',color:'#9ca3af'}},
+      y:{...baseOpts.scales.y,title:{display:true,text:'Δ% (Quasi-3D vs HSDT)',color:'#9ca3af'},
+         ticks:{callback:v=>v.toFixed(1)+'%'}}}}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology — Mechanical Postbuckling of FG-GOEAM Plates</title>
+  <meta name="description" content="Methodological document for the analytical solution of mechanical postbuckling of FG-GOEAM plates using HSDT and Quasi-3D theories.">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(','\\)'], ['$','$']],
+        displayMath: [['\\[','\\]'], ['$$','$$']],
+        tags: 'ams',
+        tagSide: 'right'
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+    };
+  </script>
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --bg2: #f4f3ef;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --soft: #4b5563;
+      --border: #e5e4de;
+      --accent: #3730a3;
+      --accent2: #0369a1;
+      --accent3: #047857;
+      --highlight: #fef3c7;
+      --card: #ffffff;
+      --sidebar: #1e293b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Lora', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.85;
+      display: flex;
+    }
+
+    /* ── SIDEBAR NAV ── */
+    .sidebar {
+      width: 260px;
+      min-height: 100vh;
+      background: var(--sidebar);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      padding: 1.8rem 0;
+      scrollbar-width: thin;
+      scrollbar-color: #334155 transparent;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 1.2rem;
+    }
+    .sidebar-brand .label {
+      font-size: 0.65rem; font-family: 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #64748b;
+      margin-bottom: 0.4rem;
+    }
+    .sidebar-brand .title {
+      font-size: 0.82rem; color: #e2e8f0;
+      font-family: 'Inter', sans-serif; font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .nav-section { padding: 0 1.2rem 0.4rem; }
+    .nav-section-title {
+      font-size: 0.62rem; font-family: 'Inter', sans-serif;
+      font-weight: 700; letter-spacing: 0.09em;
+      text-transform: uppercase; color: #475569;
+      padding: 0.6rem 0.3rem 0.3rem; display: block;
+    }
+    .nav-section a {
+      display: block; font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; color: #94a3b8;
+      text-decoration: none; padding: 0.3rem 0.5rem;
+      border-radius: 5px; transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .nav-section a:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
+    .nav-section a .num { color: #475569; margin-right: 0.4rem; font-size: 0.72rem; }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      flex: 1;
+      max-width: 860px;
+      padding: 4rem 4rem 5rem;
+      min-width: 0;
+    }
+
+    /* ── DOC HEADER ── */
+    .doc-header {
+      margin-bottom: 3.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .doc-type {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+    .doc-title {
+      font-family: 'Lora', serif;
+      font-size: 2rem; font-weight: 700;
+      line-height: 1.3; color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .doc-subtitle {
+      font-size: 1.05rem; color: var(--soft);
+      font-style: italic; margin-bottom: 1.5rem;
+    }
+    .doc-meta {
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+    }
+    .doc-meta span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; color: var(--muted);
+      display: flex; align-items: center; gap: 0.35rem;
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      margin-bottom: 3.5rem;
+      scroll-margin-top: 2rem;
+    }
+
+    h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--text); margin-bottom: 0.3rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: baseline; gap: 0.6rem;
+    }
+    h2 .sec-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--accent); letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.97rem; font-weight: 700;
+      color: var(--text); margin: 1.8rem 0 0.6rem;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      font-size: 0.965rem;
+      color: var(--soft);
+      margin-bottom: 0.9rem;
+    }
+
+    /* ── EQUATIONS ── */
+    .eq-block {
+      margin: 1.4rem 0;
+      padding: 1rem 1.4rem 1rem 1.2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      overflow-x: auto;
+      position: relative;
+    }
+    .eq-block.blue { border-left-color: var(--accent2); }
+    .eq-block.green { border-left-color: var(--accent3); }
+    .eq-block.amber { border-left-color: #b45309; }
+    .eq-block.gray { border-left-color: #6b7280; }
+
+    .eq-caption {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.5rem;
+      display: block;
+    }
+    .eq-caption.blue { color: var(--accent2); }
+    .eq-caption.green { color: var(--accent3); }
+    .eq-caption.amber { color: #92400e; }
+
+    /* ── FIGURE / SCHEME ── */
+    .scheme {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      margin: 1.5rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--soft);
+      line-height: 2;
+    }
+    .scheme .arrow { color: var(--accent); font-weight: 700; }
+    .scheme .highlight { color: var(--accent2); font-weight: 600; }
+    .scheme .new-tag {
+      display: inline-block;
+      background: #dbeafe; color: #1e40af;
+      border-radius: 3px; padding: 0.05rem 0.35rem;
+      font-size: 0.68rem; font-weight: 700;
+      vertical-align: middle; margin-left: 0.3rem;
+    }
+
+    /* ── INFO BOXES ── */
+    .box {
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin: 1.2rem 0;
+      font-size: 0.88rem;
+    }
+    .box-note {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+    .box-def {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a5f;
+    }
+    .box-key {
+      background: var(--highlight);
+      border: 1px solid #fcd34d;
+      color: #78350f;
+    }
+    .box b { font-weight: 700; }
+
+    /* ── SYMBOL TABLE ── */
+    .sym-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.85rem; margin: 1rem 0 1.5rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .sym-table th {
+      background: var(--bg2);
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+    .sym-table td {
+      padding: 0.45rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--soft);
+      vertical-align: top;
+    }
+    .sym-table tr:last-child td { border-bottom: none; }
+    .sym-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    /* ── DIFF MARKER ── */
+    .q3d-only {
+      display: inline-block;
+      background: #dbeafe; color: #1d4ed8;
+      border: 1px solid #93c5fd;
+      border-radius: 4px; padding: 0.05rem 0.45rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.04em; vertical-align: middle;
+    }
+
+    /* ── FLOW ── */
+    .flow {
+      display: flex; flex-direction: column; gap: 0;
+      margin: 1.5rem 0; border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .flow-step {
+      display: flex; align-items: stretch;
+      border-bottom: 1px solid var(--border);
+    }
+    .flow-step:last-child { border-bottom: none; }
+    .flow-num {
+      width: 44px; min-width: 44px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 800;
+      color: white; flex-shrink: 0;
+    }
+    .flow-step:nth-child(2) .flow-num { background: var(--accent2); }
+    .flow-step:nth-child(3) .flow-num { background: #0f766e; }
+    .flow-step:nth-child(4) .flow-num { background: #7c3aed; }
+    .flow-step:nth-child(5) .flow-num { background: #b45309; }
+    .flow-step:nth-child(6) .flow-num { background: #be123c; }
+    .flow-body {
+      padding: 0.75rem 1.1rem;
+      flex: 1;
+    }
+    .flow-body strong {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      color: var(--text); display: block; margin-bottom: 0.15rem;
+    }
+    .flow-body span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem; color: var(--muted);
+    }
+
+    /* Horizontal rule */
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      main { padding: 2rem 1.5rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="label">Methodology</div>
+    <div class="title">FG-GOEAM Plate Postbuckling</div>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-title">Problem Definition</span>
+    <a href="#s1"><span class="num">1.</span>Problem Statement</a>
+    <a href="#s2"><span class="num">2.</span>Plate Geometry</a>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-title">Material Model</span>
+    <a href="#s3"><span class="num">3.</span>FG-GOEAM Constituents</a>
+    <a href="#s4"><span class="num">4.</span>Graphene Distribution</a>
+    <a href="#s5"><span class="num">5.</span>Effective Properties</a>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-title">Plate Theory</span>
+    <a href="#s6"><span class="num">6.</span>Displacement Field</a>
+    <a href="#s7"><span class="num">7.</span>Constitutive Relations</a>
+    <a href="#s8"><span class="num">8.</span>Stiffness Matrices</a>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-title">Quasi-3D Extension</span>
+    <a href="#s9"><span class="num">9.</span>Static Condensation</a>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-title">Governing Equations</span>
+    <a href="#s10"><span class="num">10.</span>Equilibrium &amp; Compatibility</a>
+    <a href="#s11"><span class="num">11.</span>Stress Function Coefficients</a>
+    <a href="#s12"><span class="num">12.</span>Elastic Foundation</a>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-section-title">Solution Method</span>
+    <a href="#s13"><span class="num">13.</span>Galerkin Method</a>
+    <a href="#s14"><span class="num">14.</span>Postbuckling Path</a>
+    <a href="#s15"><span class="num">15.</span>Nondimensional Form</a>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+
+<!-- DOC HEADER -->
+<div class="doc-header">
+  <div class="doc-type">Technical Methodology Document</div>
+  <div class="doc-title">Mechanical Postbuckling of Functionally Graded Graphene-Origami–Enabled Auxetic Metamaterial Plates</div>
+  <div class="doc-subtitle">An Analytical Approach Based on Higher-order Shear Deformation Theory and Quasi-3D Thickness Stretching</div>
+  <div class="doc-meta">
+    <span>📋 Method: Galerkin + Stress Function</span>
+    <span>📐 Theories: HSDT · Quasi-3D</span>
+    <span>🔢 Solution: Closed-form postbuckling path</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 1. PROBLEM STATEMENT -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s1">
+  <h2><span class="sec-num">1.</span> Problem Statement</h2>
+
+  <p>This document describes the complete analytical method used to determine the mechanical postbuckling response of functionally graded graphene-origami–enabled auxetic metamaterial (FG-GOEAM) plates resting on a two-parameter elastic foundation. The plates are subject to uniaxial or biaxial compressive in-plane loading under thermal environments.</p>
+
+  <p>Two plate theories are considered in parallel throughout the formulation:</p>
+
+  <div class="box box-def">
+    <b>Theory 1 — HSDT (Higher-order Shear Deformation Theory):</b> Adopts the plane-stress hypothesis, i.e., the transverse normal stress and strain are assumed negligible: \(\sigma_z = 0,\ \varepsilon_z = 0\). Stiffness is computed from 2D reduced elastic constants \(Q_{ij}\).
+  </div>
+
+  <div class="box box-def">
+    <b>Theory 2 — Quasi-3D (Thickness Stretching):</b> Relaxes the plane-stress assumption and allows \(\varepsilon_z \neq 0\). Full 3D elastic constants \(C_{ij}\) are used. The condition \(\sigma_z = 0\) is subsequently enforced via static condensation, modifying all stiffness matrices to account for Poisson coupling in the thickness direction.
+  </div>
+
+  <p>The governing equations are identical in form for both theories; the only difference lies in the stiffness matrices that enter those equations.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 2. GEOMETRY -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s2">
+  <h2><span class="sec-num">2.</span> Plate Geometry and Coordinate System</h2>
+
+  <p>The plate occupies the domain \(0 \le x \le a\), \(0 \le y \le b\), \(-h/2 \le z \le h/2\), where \(a\) and \(b\) are the in-plane dimensions and \(h\) is the total thickness. The mid-plane lies at \(z = 0\). The plate is discretized numerically into \(N_L = 10\) layers through the thickness for integration purposes. The \(k\)th layer occupies:</p>
+
+  \[z_{bot}^{(k)} = \frac{(N_L/2 - k)\,h}{N_L}, \qquad z_{top}^{(k)} = \frac{(N_L/2 - k + 1)\,h}{N_L}, \qquad z_{mid}^{(k)} = \frac{z_{bot}^{(k)} + z_{top}^{(k)}}{2} \tag{1}\]
+
+  <p>The shear correction constant used in the HSDT is:</p>
+
+  \[c_1 = \frac{4}{3h^2}, \qquad c_2 = 3c_1 = \frac{4}{h^2} \tag{2}\]
+
+  <p>These constants arise naturally from the condition that the transverse shear stresses vanish at the top and bottom plate surfaces in the Reddy-type higher-order theory.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 3. FG-GOEAM CONSTITUENTS -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s3">
+  <h2><span class="sec-num">3.</span> Material Description — FG-GOEAM Constituents</h2>
+
+  <p>The plates are composed of a copper (Cu) matrix reinforced with graphene (Gr) platelets. The material system is designated FG-GOEAM to reflect its functionally graded graphene-origami–enabled auxetic metamaterial character. The constituent material constants used in the model are listed below.</p>
+
+  <table class="sym-table">
+    <thead><tr><th>Symbol</th><th>Constituent</th><th>Value</th><th>Unit</th></tr></thead>
+    <tbody>
+      <tr><td>$E_{Gr}$</td><td>Graphene elastic modulus</td><td>929.57 × 10⁹</td><td>Pa</td></tr>
+      <tr><td>$\nu_{Gr}$</td><td>Graphene Poisson ratio</td><td>0.22</td><td>—</td></tr>
+      <tr><td>$\alpha_{Gr}$</td><td>Graphene thermal expansion coefficient</td><td>−3.98 × 10⁻⁶</td><td>K⁻¹</td></tr>
+      <tr><td>$\rho_{Gr}$</td><td>Graphene density</td><td>1800</td><td>kg/m³</td></tr>
+      <tr><td>$E_{Cu}$</td><td>Copper elastic modulus</td><td>65.79 × 10⁹</td><td>Pa</td></tr>
+      <tr><td>$\nu_{Cu}$</td><td>Copper Poisson ratio</td><td>0.387</td><td>—</td></tr>
+      <tr><td>$\alpha_{Cu}$</td><td>Copper thermal expansion coefficient</td><td>16.51 × 10⁻⁶</td><td>K⁻¹</td></tr>
+      <tr><td>$\rho_{Cu}$</td><td>Copper density</td><td>8800</td><td>kg/m³</td></tr>
+      <tr><td>$l_{Gr}$</td><td>Graphene platelet length (Halpin–Tsai)</td><td>83.76 × 10⁻¹⁰</td><td>m</td></tr>
+      <tr><td>$t_{Gr}$</td><td>Graphene platelet thickness (Halpin–Tsai)</td><td>3.40 × 10⁻¹⁰</td><td>m</td></tr>
+      <tr><td>$T_0$</td><td>Reference temperature</td><td>300</td><td>K</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Halpin–Tsai Geometry Parameters</h3>
+  <p>The effective elastic modulus is estimated via the Halpin–Tsai micromechanics model. The geometric parameter \(\xi\) is defined by the platelet aspect ratio, and \(\eta\) is the Halpin–Tsai interaction parameter:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Halpin–Tsai parameters</span>
+    \[\xi = \frac{2\,l_{Gr}}{t_{Gr}}, \qquad \eta = \frac{E_{Gr}/E_{Cu} - 1}{E_{Gr}/E_{Cu} + \xi} \tag{3}\]
+  </div>
+
+  <h3>Temperature- and Volume-Fraction–Dependent Modification Functions</h3>
+  <p>The effective properties of each layer are not simply rule-of-mixtures quantities; they are modified by three empirical functions that account for coupled temperature and volume-fraction effects specific to the graphene–copper system. Let \(V_{Gr}\) denote the local graphene volume fraction, \(T\) the operating temperature, \(T_0 = 300\,\text{K}\) the reference temperature, and \(H_{Gr}\) the hollow-graphene weight fraction.</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Elastic modulus modification function</span>
+    \[f_E = 1.11 - 1.22\,V_{Gr} - 0.134\tfrac{T}{T_0} + 0.559\,V_{Gr}\tfrac{T}{T_0} - 5.5\,H_{Gr}V_{Gr} + 38\,H_{Gr}V_{Gr}^2 - 20.6\,H_{Gr}^2 V_{Gr}^2 \tag{4}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Poisson ratio modification function</span>
+    \[f_\nu = 1.01 - 1.43\,V_{Gr} + 0.165\tfrac{T}{T_0} - 16.8\,H_{Gr}V_{Gr} - 1.1\,H_{Gr}V_{Gr}\tfrac{T}{T_0} + 16\,H_{Gr}^2 V_{Gr}^2 \tag{5}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Thermal expansion coefficient modification function</span>
+    \[f_\alpha = 0.794 - 16.8\,V_{Gr}^2 - 0.0279\!\left(\tfrac{T}{T_0}\right)^{\!2} + 0.182\,\tfrac{T}{T_0}\!\left(1 + V_{Gr}\right) \tag{6}\]
+  </div>
+
+  <p>These three functions are applied pointwise at each layer and each temperature to compute the corrected effective properties below.</p>
+
+  <h3>Effective Properties of Each Layer</h3>
+  <p>With the volume fraction \(V_{Cu} = 1 - V_{Gr}\) of the copper phase, the effective elastic modulus, Poisson ratio, and thermal expansion coefficient of each layer are:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Effective elastic modulus (Halpin–Tsai + modification)</span>
+    \[E = \frac{\left(1 + \xi\,\eta\,V_{Gr}\right) E_{Cu}\,f_E}{1 - \eta\,V_{Gr}} \tag{7}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Effective Poisson ratio and thermal expansion coefficient</span>
+    \[\nu = \left(\nu_{Gr}\,V_{Gr} + \nu_{Cu}\,V_{Cu}\right) f_\nu, \qquad \alpha = \left(\alpha_{Gr}\,V_{Gr} + \alpha_{Cu}\,V_{Cu}\right) f_\alpha \tag{8}\]
+  </div>
+
+  <p>Note that \(E\), \(\nu\), and \(\alpha\) are all functions of \(z\) (through \(V_{Gr}(z)\)) and of \(T\). They are evaluated at the mid-plane of each numerical layer.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 4. GRAPHENE DISTRIBUTION -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s4">
+  <h2><span class="sec-num">4.</span> Graphene Distribution Through the Thickness</h2>
+
+  <p>The local graphene volume fraction \(V_{Gr}(z)\) is not uniform in general. Before specifying the distribution, the global graphene volume fraction \(V_{Gr}^s\) is related to the given graphene weight fraction \(W_{Gr}\) by accounting for the density contrast between graphene and copper:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Weight fraction to volume fraction conversion</span>
+    \[V_{Gr}^s = \frac{W_{Gr}}{W_{Gr} + (\rho_{Gr}/\rho_{Cu})(1 - W_{Gr})} \tag{9}\]
+  </div>
+
+  <p>Three distribution patterns are considered. The local volume fraction at the mid-plane \(z_{mid}\) of each layer is assigned as follows:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">U-WGr — Uniform distribution</span>
+    \[V_{Gr}(z) = V_{Gr}^s \tag{10a}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">X-WGr — Graphene concentrated at the surfaces</span>
+    \[V_{Gr}(z) = 2\,V_{Gr}^s \cdot \frac{2\,|z_{mid}|}{h} \tag{10b}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">O-WGr — Graphene concentrated at the mid-plane</span>
+    \[V_{Gr}(z) = 2\,V_{Gr}^s \left(1 - \frac{2\,|z_{mid}|}{h}\right) \tag{10c}\]
+  </div>
+
+  <p>In all three cases the graphene volume fraction integrates to the same global value \(V_{Gr}^s\), ensuring a fair comparison. The U-WGr pattern produces a homogeneous plate (all layers identical), whereas the X-WGr and O-WGr patterns introduce through-thickness property gradients that activate the Quasi-3D correction.</p>
+
+  <div class="box box-key">
+    <b>Physical significance:</b> For U-WGr, all material constants are \(z\)-independent. It can be shown analytically that the static condensation in §9 then produces a condensed stiffness exactly equal to the HSDT stiffness — hence U-WGr always yields a ~0% difference between the two theories.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 5. EFFECTIVE PROPERTIES (SUMMARY) -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s5">
+  <h2><span class="sec-num">5.</span> Layer-by-Layer Property Evaluation</h2>
+  <p>For each layer \(k = 1, \ldots, N_L\), the following procedure is applied at \(z_{mid}^{(k)}\): (i) evaluate \(V_{Gr}(z_{mid}^{(k)})\) from Eq. (10); (ii) compute the modification functions \(f_E, f_\nu, f_\alpha\) from Eqs. (4)–(6); (iii) evaluate \(E, \nu, \alpha\) from Eqs. (7)–(8). The resulting layer-wise values are then used to construct the constitutive matrices in §7.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 6. DISPLACEMENT FIELD -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s6">
+  <h2><span class="sec-num">6.</span> Plate Displacement Field</h2>
+
+  <p>A Reddy-type third-order shear deformation theory (HSDT) is employed as the basis for both theories. The displacement field of a material point at position \((x, y, z)\) is:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Displacement field — common to HSDT and Quasi-3D</span>
+    \[u(x,y,z) = u_0 - z\,w_{0,x} + c_1 z^3\!\left(w_{0,x} + \phi_x\right) \tag{11a}\]
+    \[v(x,y,z) = v_0 - z\,w_{0,y} + c_1 z^3\!\left(w_{0,y} + \phi_y\right) \tag{11b}\]
+    \[w(x,y,z) = w_0 \quad \text{(HSDT)}, \qquad \text{or} \qquad w = w_0 + \xi(z)\,\psi \quad \text{(Quasi-3D)} \tag{11c}\]
+  </div>
+
+  <p>Here \(u_0\), \(v_0\), \(w_0\) are the mid-plane displacements, \(\phi_x\) and \(\phi_y\) are the rotations of the transverse normals about the \(y\)- and \(x\)-axes, respectively. In HSDT, the transverse displacement \(w\) is independent of \(z\), implying \(\varepsilon_z = 0\). In the Quasi-3D extension, an additional degree of freedom \(\psi\) multiplied by a thickness-stretching shape function \(\xi(z)\) allows \(\varepsilon_z \neq 0\).</p>
+
+  <p>The cubic term \(c_1 z^3\) in the in-plane displacements ensures a parabolic variation of the transverse shear strains through the thickness, satisfying traction-free boundary conditions at \(z = \pm h/2\) without a shear correction factor.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 7. CONSTITUTIVE RELATIONS -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s7">
+  <h2><span class="sec-num">7.</span> Constitutive Relations</h2>
+
+  <h3>7.1 HSDT — 2D Plane-Stress Reduced Stiffness</h3>
+  <p>Under the plane-stress assumption \(\sigma_z = 0\), the elastic constants of each layer reduce from the full 3D set to the 2D reduced stiffnesses:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">2D reduced stiffness constants (HSDT)</span>
+    \[Q_{11} = Q_{22} = \frac{E}{1 - \nu^2}, \qquad Q_{12} = Q_{21} = \frac{E\,\nu}{1 - \nu^2}, \qquad Q_{66} = Q_{44} = Q_{55} = \frac{E}{2(1+\nu)} \tag{12}\]
+  </div>
+
+  <p>The denominator \((1-\nu^2)\) reflects the 2D Poisson coupling in the \(x\)–\(y\) plane only. The \(z\)-direction Poisson effect — the tendency of the plate to contract or expand in thickness under in-plane loading — is entirely absent in this formulation.</p>
+
+  <h3>7.2 Quasi-3D — Full 3D Elasticity Constants <span class="q3d-only">Quasi-3D only</span></h3>
+  <p>When thickness stretching is admitted, the full isotropic 3D elasticity tensor applies. The two independent constants for each layer are:</p>
+
+  <div class="eq-block blue">
+    <span class="eq-caption blue">3D elasticity constants (Quasi-3D)</span>
+    \[C_{11} = C_{22} = C_{33} = \frac{E(1-\nu)}{(1+\nu)(1-2\nu)}, \qquad C_{12} = C_{13} = C_{23} = \frac{E\,\nu}{(1+\nu)(1-2\nu)} \tag{13}\]
+  </div>
+
+  <p>The denominator \((1+\nu)(1-2\nu)\) is strictly larger than \((1-\nu^2)\) for any \(0 < \nu < 0.5\), so \(C_{11} > Q_{11}\) always. However, after static condensation (§9), the net effective stiffness is reduced back toward \(Q_{11}\). For a homogeneous plate the reduction is exact; for a graded plate a residual correction remains, which constitutes the Quasi-3D effect.</p>
+
+  <h3>7.3 Thermal Stress Resultant Integrands</h3>
+  <p>The thermal increment \(\Delta T = T - T_0\) produces prestress resultants through the plate thickness. For HSDT, the thermal force integrand per unit area of the mid-plane is:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Thermal stress integrand (HSDT)</span>
+    \[\beta(z) = \left(Q_{11}(z) + Q_{12}(z)\right)\alpha(z)\,\Delta T \tag{14}\]
+  </div>
+
+  <p>For Quasi-3D, an additional thickness-direction thermal term is needed:</p>
+
+  <div class="eq-block blue">
+    <span class="eq-caption blue">Thickness-direction thermal integrand (Quasi-3D)</span>
+    \[\beta_z(z) = \left(2\,C_{12}(z) + C_{11}(z)\right)\alpha(z)\,\Delta T \tag{15}\]
+  </div>
+
+  <p>This term enters the thermal correction to the condensed stress resultants in §9.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 8. STIFFNESS MATRICES -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s8">
+  <h2><span class="sec-num">8.</span> Plate Stiffness Matrices</h2>
+
+  <p>The structural stiffness of the plate is characterized by a hierarchy of matrices obtained by integrating the pointwise stiffness constants multiplied by powers of the thickness coordinate \(z\). This integration reflects how different orders of the displacement field couple to the elastic response:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">General stiffness integral definition</span>
+    \[\left(A_{ij},\;B_{ij},\;D_{ij},\;E_{ij},\;F_{ij},\;H_{ij}\right) = \int_{-h/2}^{h/2} \bar{Q}_{ij}(z)\,\left(1,\;z,\;z^2,\;z^3,\;z^4,\;z^6\right)dz \tag{16}\]
+  </div>
+
+  <p>where \(\bar{Q}_{ij} = Q_{ij}(z)\) for HSDT, or \(\bar{Q}_{ij} = C_{ij}(z)\) for the 3D stiffness matrices (denoted \(A_{ij}^{3D}, \ldots\)) before condensation in the Quasi-3D formulation. The physical roles of each matrix are:</p>
+
+  <table class="sym-table">
+    <thead><tr><th>Matrix</th><th>Power of \(z\)</th><th>Physical role</th></tr></thead>
+    <tbody>
+      <tr><td>$A_{ij}$</td><td>$z^0$</td><td>Membrane (extensional) stiffness</td></tr>
+      <tr><td>$B_{ij}$</td><td>$z^1$</td><td>Bending–stretching coupling (zero for symmetric laminates)</td></tr>
+      <tr><td>$D_{ij}$</td><td>$z^2$</td><td>Bending stiffness</td></tr>
+      <tr><td>$E_{ij}$</td><td>$z^3$</td><td>Higher-order bending–stretching coupling</td></tr>
+      <tr><td>$F_{ij}$</td><td>$z^4$</td><td>Higher-order bending stiffness</td></tr>
+      <tr><td>$H_{ij}$</td><td>$z^6$</td><td>Highest-order bending stiffness (from cubic shear term)</td></tr>
+    </tbody>
+  </table>
+
+  <p>Note that the \(z^5\) integral is absent because the HSDT displacement field contains no \(z^5\) term. The \(H_{ij}\) integral uses \(z^6\) because the cubic correction in Eq. (11) introduces a \(z^3\) term whose square is \(z^6\).</p>
+
+  <p>Numerically, the integrals are evaluated by summing layer contributions using the midpoint rule over \(N_L = 10\) layers:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Numerical integration — layer summation</span>
+    \[A_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\Delta z^{(k)}, \quad B_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\frac{(z_{top}^{(k)})^2-(z_{bot}^{(k)})^2}{2}, \quad D_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\frac{(z_{top}^{(k)})^3-(z_{bot}^{(k)})^3}{3} \tag{17}\]
+  </div>
+
+  <p>and analogously for \(E_{ij}\) (\(z^4/4\)), \(F_{ij}\) (\(z^5/5\)), and \(H_{ij}\) (\(z^7/7\)). Transverse shear stiffness matrices \(A_{44}, D_{44}, F_{44}\) (and their \(55\)-counterparts) are computed using \(Q_{44} = Q_{66}\).</p>
+
+  <h3>Thermal Force and Moment Resultants</h3>
+  <p>The thermal prestress resultants entering the equilibrium equations are:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Thermal resultants</span>
+    \[N_{xx}^T = N_{yy}^T = \sum_{k=1}^{N_L}\int_{z_{bot}}^{z_{top}}\!\beta(z)\,dz, \quad M_{xx}^T = M_{yy}^T = \sum_{k=1}^{N_L}\int_{z_{bot}}^{z_{top}}\!\beta(z)\,z\,dz, \quad P_{xx}^T = P_{yy}^T = \sum_{k=1}^{N_L}\int_{z_{bot}}^{z_{top}}\!\beta(z)\,z^3\,dz \tag{18}\]
+  </div>
+
+  <p>where \(\beta(z)\) is defined in Eq. (14).</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 9. STATIC CONDENSATION -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s9">
+  <h2><span class="sec-num">9.</span> Static Condensation for Quasi-3D Thickness Stretching <span class="q3d-only">Quasi-3D only</span></h2>
+
+  <p>The Quasi-3D theory introduces the 3D stiffness matrices \(A_{ij}^{3D}, B_{ij}^{3D}, \ldots, H_{ij}^{3D}\) computed from \(C_{ij}(z)\) via Eq. (17). The condition \(\sigma_z = 0\) must then be imposed a posteriori. From the 3D constitutive law:</p>
+
+  \[\sigma_z = C_{12}\,\varepsilon_x + C_{12}\,\varepsilon_y + C_{11}\,\varepsilon_z = 0 \implies \varepsilon_z = -\frac{C_{12}}{C_{11}}\left(\varepsilon_x + \varepsilon_y\right) \tag{19}\]
+
+  <p>Substituting Eq. (19) back into the in-plane stress equations yields condensed in-plane stiffnesses. For a plate with through-thickness property variation, the condensation must be carried out at the level of the integrated stiffness matrices (not pointwise), leading to a Schur complement operation.</p>
+
+  <h3>Step 1 — Inverse operator for the thickness direction</h3>
+  <p>Define the \(2 \times 2\) inverse operator from the through-thickness stiffness block \([A_{11}^{3D}, B_{11}^{3D}; B_{11}^{3D}, D_{11}^{3D}]\):</p>
+
+  <div class="eq-block blue">
+    <span class="eq-caption blue">Condensation inverse operator</span>
+    \[\det K = A_{11}^{3D}\,D_{11}^{3D} - \left(B_{11}^{3D}\right)^2 \tag{20a}\]
+    \[I_{11} = \frac{D_{11}^{3D}}{\det K}, \quad I_{12} = I_{21} = \frac{-B_{11}^{3D}}{\det K}, \quad I_{22} = \frac{A_{11}^{3D}}{\det K} \tag{20b}\]
+  </div>
+
+  <h3>Step 2 — Condensed stiffness matrices</h3>
+  <p>Each stiffness matrix is reduced by subtracting the coupling contribution through the thickness inverse operator. The general pattern is:</p>
+
+  <div class="eq-block blue">
+    <span class="eq-caption blue">Condensed A matrix</span>
+    \[A_{11}^c = A_{11}^{3D} - A_{12}^{3D}\!\left(I_{11}\,A_{12}^{3D} + I_{12}\,B_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,A_{12}^{3D} + I_{22}\,B_{12}^{3D}\right) \tag{21a}\]
+    \[A_{12}^c = A_{12}^{3D} - A_{12}^{3D}\!\left(I_{11}\,A_{12}^{3D} + I_{12}\,B_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,A_{12}^{3D} + I_{22}\,B_{12}^{3D}\right) \tag{21b}\]
+  </div>
+
+  <div class="eq-block blue">
+    <span class="eq-caption blue">Condensed B and D matrices</span>
+    \[B_{11}^c = B_{11}^{3D} - A_{12}^{3D}\!\left(I_{11}\,B_{12}^{3D} + I_{12}\,D_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,B_{12}^{3D} + I_{22}\,D_{12}^{3D}\right) \tag{21c}\]
+    \[D_{11}^c = D_{11}^{3D} - B_{12}^{3D}\!\left(I_{11}\,B_{12}^{3D} + I_{12}\,D_{12}^{3D}\right) - D_{12}^{3D}\!\left(I_{21}\,B_{12}^{3D} + I_{22}\,D_{12}^{3D}\right) \tag{21d}\]
+  </div>
+
+  <div class="eq-block blue">
+    <span class="eq-caption blue">Condensed higher-order matrices E, F, H</span>
+    \[E_{11}^c = E_{11}^{3D} - A_{12}^{3D}\!\left(I_{11}\,E_{12}^{3D} + I_{12}\,F_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,E_{12}^{3D} + I_{22}\,F_{12}^{3D}\right) \tag{21e}\]
+    \[F_{11}^c = F_{11}^{3D} - B_{12}^{3D}\!\left(I_{11}\,E_{12}^{3D} + I_{12}\,F_{12}^{3D}\right) - D_{12}^{3D}\!\left(I_{21}\,E_{12}^{3D} + I_{22}\,F_{12}^{3D}\right) \tag{21f}\]
+    \[H_{11}^c = H_{11}^{3D} - E_{12}^{3D}\!\left(I_{11}\,E_{12}^{3D} + I_{12}\,F_{12}^{3D}\right) - F_{12}^{3D}\!\left(I_{21}\,E_{12}^{3D} + I_{22}\,F_{12}^{3D}\right) \tag{21g}\]
+  </div>
+
+  <p>All \({}_{22}\), \({}_{12}\), and \({}_{21}\) components follow the same condensation pattern with appropriate substitution of indices. The transverse shear stiffness matrices \(A_{44}, D_{44}, F_{44}\) are not affected by the condensation since they are associated with shear in the \(x\)–\(z\) and \(y\)–\(z\) planes, not the \(z\)-normal direction.</p>
+
+  <h3>Step 3 — Thermal resultant correction</h3>
+  <p>The in-plane thermal resultants are also corrected by the thickness-direction thermal term \(N_{zz}^T = \int \beta_z\,dz\):</p>
+
+  <div class="eq-block blue">
+    <span class="eq-caption blue">Corrected thermal resultants</span>
+    \[N_{xx}^{T,c} = N_{xx}^T - A_{12}^{3D}\!\left(I_{11}\,N_{zz}^T\right) - B_{12}^{3D}\!\left(I_{22}\,N_{zz}^T\right) \tag{22}\]
+  </div>
+
+  <p>After condensation, the matrices \(A_{ij}^c, B_{ij}^c, D_{ij}^c, E_{ij}^c, F_{ij}^c, H_{ij}^c\) replace their HSDT counterparts in all subsequent equations. From this point onward, the formulation is identical for both theories.</p>
+
+  <div class="box box-note">
+    <b>Analytical invariance for U-WGr:</b> For a plate with \(z\)-independent \(C_{ij}\), one has \(B_{11}^{3D} = B_{12}^{3D} = 0\) (symmetric integration), \(A_{11}^{3D} = C_{11}h\), \(D_{11}^{3D} = C_{11}h^3/12\). The condensation then yields \(A_{11}^c = h(C_{11} - C_{12}^2/C_{11})\). Using the identity \(C_{11} - C_{12}^2/C_{11} = E/(1-\nu^2) = Q_{11}\), one recovers \(A_{11}^c = A_{11}^{HSDT}\) exactly. This is why the U-WGr pattern always produces a ~0% difference between the two theories.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 10. GOVERNING EQUATIONS -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s10">
+  <h2><span class="sec-num">10.</span> Governing Equilibrium and Compatibility Equations</h2>
+
+  <p>The governing equations are derived from the principle of virtual displacements applied to the displacement field of §6 and the constitutive relations of §7. The resulting system couples the transverse deflection \(w_0\) with the in-plane Airy stress function \(f\) through von Kármán-type geometric nonlinearity. The approach decouples the in-plane problem (compatibility equation) from the out-of-plane problem (equilibrium equation).</p>
+
+  <p>The compatibility equation (in-plane) and the equilibrium equation (out-of-plane) are expressed in terms of the stress function \(f\) and deflection \(w_0\). Through-thickness integration of the constitutive relations yields the stress resultants and moments, which enter the governing PDEs. After substituting the constitutive and kinematic relations, the equations involve the stiffness matrices \(A_{ij}\), \(B_{ij}\), \(D_{ij}\), \(E_{ij}\), \(F_{ij}\), \(H_{ij}\) computed in §8 (or their condensed versions from §9 for Quasi-3D).</p>
+
+  <h3>Nonlinear Governing Equations of Motion (Equilibrium)</h3>
+  <p>Using the principle of virtual work, the nonlinear governing equations of motion for the plate under Reddy's HSDT are derived as follows:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">In-plane force equilibrium</span>
+    \[\frac{\partial N_{xx}}{\partial x} + \frac{\partial N_{xy}}{\partial y} = 0 \tag{27a}\]
+    \[\frac{\partial N_{xy}}{\partial x} + \frac{\partial N_{yy}}{\partial y} = 0 \tag{27b}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Rotational equilibrium equations</span>
+    \[\frac{\partial M_{xx}}{\partial x} + \frac{\partial M_{xy}}{\partial y} - Q_x - c_1 \left(\frac{\partial P_{xx}}{\partial x} + \frac{\partial P_{xy}}{\partial y}\right) + 3c_1 R_x = 0 \tag{27c}\]
+    \[\frac{\partial M_{xy}}{\partial x} + \frac{\partial M_{yy}}{\partial y} - Q_y - c_1 \left(\frac{\partial P_{xy}}{\partial x} + \frac{\partial P_{yy}}{\partial y}\right) + 3c_1 R_y = 0 \tag{27d}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Transverse (out-of-plane) equilibrium equation</span>
+    \[\left(N_{xx} + N_{xx}^T\right)\frac{\partial^2 w_0}{\partial x^2} + 2N_{xy}\frac{\partial^2 w_0}{\partial x \partial y} + \left(N_{yy} + N_{yy}^T\right)\frac{\partial^2 w_0}{\partial y^2} + \frac{\partial^2 M_{xx}}{\partial x^2} + 2\frac{\partial^2 M_{xy}}{\partial x \partial y} + \frac{\partial^2 M_{yy}}{\partial y^2} - c_1\left(\frac{\partial^2 P_{xx}}{\partial x^2} + 2\frac{\partial^2 P_{xy}}{\partial x \partial y} + \frac{\partial^2 P_{yy}}{\partial y^2}\right) + q - q_f = 0 \tag{27e}\]
+  </div>
+
+  <p>where \(q\) is the transverse mechanical load (equal to \(0\) in this postbuckling study), and \(q_f\) is the reaction of the two-parameter elastic foundation:</p>
+  
+  <div class="eq-block green">
+    <span class="eq-caption green">Elastic foundation reaction</span>
+    \[q_f = K_1 w_0 - K_2 \nabla^2 w_0 = K_1 w_0 - K_2 \left(\frac{\partial^2 w_0}{\partial x^2} + \frac{\partial^2 w_0}{\partial y^2}\right) \tag{27f}\]
+  </div>
+
+  <h3>Geometrical Compatibility Equation</h3>
+  <p>To eliminate the in-plane displacements \(u_0\) and \(v_0\) and solve the system in terms of the transverse deflection \(w_0\) and the Airy stress function \(f\), the in-plane equations of motion are satisfied identically by introducing the stress function \(f(x, y)\):</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Airy stress function definition</span>
+    \[N_{xx} = \frac{\partial^2 f}{\partial y^2}, \qquad N_{yy} = \frac{\partial^2 f}{\partial x^2}, \qquad N_{xy} = -\frac{\partial^2 f}{\partial x \partial y} \tag{28}\]
+  </div>
+
+  <p>By combining the strain-displacement relationships and mid-plane strain components, the compatibility equation in terms of the strain components is written as:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Strain compatibility relation</span>
+    \[\frac{\partial^2 \varepsilon_{x}^0}{\partial y^2} + \frac{\partial^2 \varepsilon_{y}^0}{\partial x^2} - \frac{\partial^2 \gamma_{xy}^0}{\partial x \partial y} = \left(\frac{\partial^2 w_0}{\partial x \partial y}\right)^2 - \frac{\partial^2 w_0}{\partial x^2}\frac{\partial^2 w_0}{\partial y^2} \tag{29}\]
+  </div>
+
+  <p>Substituting the inverted constitutive relations into Eq. (25) yields the compatibility equation in terms of \(f\), \(w_0\), and the rotation functions (\(\phi_x, \phi_y\)):</p>
+
+  <div class="eq-block amber">
+    <span class="eq-caption amber">Compatibility equation in terms of stress function</span>
+    \[J_{11} \frac{\partial^4 f}{\partial x^4} + J_{12} \frac{\partial^4 f}{\partial x^2 \partial y^2} + J_{13} \frac{\partial^4 f}{\partial y^4} = \left(\frac{\partial^2 w_0}{\partial x \partial y}\right)^2 - \frac{\partial^2 w_0}{\partial x^2}\frac{\partial^2 w_0}{\partial y^2} + J_{21} \frac{\partial^4 w_0}{\partial x^4} + J_{22} \frac{\partial^4 w_0}{\partial x^2 \partial y^2} + J_{23} \frac{\partial^4 w_0}{\partial y^4} + J_{31} \frac{\partial^3 \phi_x}{\partial x^3} + J_{32} \left(\frac{\partial^3 \phi_x}{\partial x \partial y^2} + \frac{\partial^3 \phi_y}{\partial x^2 \partial y}\right) + J_{33} \frac{\partial^3 \phi_y}{\partial y^3} \tag{30}\]
+  </div>
+
+  <h3>Inverted Stiffness Coefficients</h3>
+  <p>The in-plane constitutive equations must be inverted to express the in-plane strains in terms of stress resultants and deflection. This inversion produces a set of coefficients \(C_{ij}\) (not to be confused with the 3D elastic constants of the same name; they are contextually distinct):</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Denominator of in-plane stiffness inversion (Eq. 19 in source)</span>
+    \[\mathrm{Denom} = A_{12}\,A_{21} - A_{11}\,A_{22} \tag{27}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Inverted stiffness coefficients — rows 1 and 2</span>
+    \[C_{11} = \frac{A_{12}}{\mathrm{Denom}}, \quad C_{12} = -\frac{A_{22}}{\mathrm{Denom}}, \quad C_{13} = -\frac{A_{12}B_{21} - A_{22}B_{11}}{\mathrm{Denom}}, \quad C_{14} = -\frac{A_{12}B_{22} - A_{22}B_{12}}{\mathrm{Denom}} \tag{28a}\]
+    \[C_{15} = -\frac{A_{12}E_{21} - A_{22}E_{11}}{\mathrm{Denom}}, \quad C_{16} = -\frac{A_{12}E_{22} - A_{22}E_{12}}{\mathrm{Denom}} \tag{28b}\]
+    \[C_{21} = \frac{A_{11}}{-\mathrm{Denom}}, \quad C_{22} = -\frac{A_{21}}{-\mathrm{Denom}}, \quad C_{23} = -\frac{A_{11}B_{21} - A_{21}B_{11}}{-\mathrm{Denom}}, \quad \ldots \tag{28c}\]
+    \[C_{31} = -\frac{1}{A_{66}}, \quad C_{32} = -\frac{B_{66}}{A_{66}}, \quad C_{33} = -\frac{E_{66}}{A_{66}} \tag{28d}\]
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 11. STRESS FUNCTION COEFFICIENTS -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s11">
+  <h2><span class="sec-num">11.</span> Stress Function and Geometric Coefficients</h2>
+
+  <h3>Geometric coefficients \(J_{ij}\)</h3>
+  <p>The coefficients \(J_{ij}\) appear in the compatibility equation. They combine the inverted stiffness \(C_{ij}\) with the HSDT constant \(c_1\):</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">J coefficients (Eq. 21 in source)</span>
+    \[J_{11} = C_{21}, \quad J_{12} = C_{11}+C_{22}-C_{31}, \quad J_{13} = C_{12} \tag{29a}\]
+    \[J_{21} = C_{23}-c_1C_{25}, \quad J_{22} = C_{13}-c_1C_{15}-C_{32}+c_1C_{33}, \quad J_{24} = C_{14}-c_1C_{16} \tag{29b}\]
+    \[J_{31} = -c_1C_{25}, \quad J_{32} = -c_1(C_{15}+C_{26})+2c_1C_{33}, \quad J_{33} = -c_1C_{16} \tag{29c}\]
+  </div>
+
+  <h3>Stress function solution \(R_{ij}\)</h3>
+  <p>Assuming simply supported boundary conditions and a sinusoidal deflection mode \(w_0 = W\sin(m\pi x/a)\sin(n\pi y/b)\), the Airy stress function is solved analytically. The coefficients of the stress function in terms of the deflection amplitude are (Eq. 28 in source):</p>
+
+  <div class="eq-block amber">
+    <span class="eq-caption amber">Stress function coefficients</span>
+    \[R_{11} = \frac{a^2 n^2}{32\,b^2 J_{11} m^2}, \quad R_{21} = \frac{b^2 m^2}{32\,a^2 J_{13} n^2} \tag{30a}\]
+    \[R_{31} = \frac{-a\,b^4 J_{21}m^3 - a^3 b^2 J_{22}m\,n^2}{\pi(b^4 J_{11}m^4 + a^2 b^2 J_{12}m^2 n^2 + a^4 J_{13}n^4)}, \quad R_{32} = \frac{-a^2 b^3 J_{23}m^2 n - a^4 b\,J_{24}n^3}{\pi(\cdots)} \tag{30b}\]
+    \[R_{33} = \frac{-\pi(b^4 J_{31}m^4 + a^2 b^2 J_{32}m^2 n^2 + a^4 J_{33}n^4)}{\pi(b^4 J_{11}m^4 + a^2 b^2 J_{12}m^2 n^2 + a^4 J_{13}n^4)} \tag{30c}\]
+  </div>
+
+  <p>The \(R_{11}\) and \(R_{21}\) coefficients capture the membrane response to the quadratic nonlinear deflection terms. The \(R_{31}\), \(R_{32}\), \(R_{33}\) coefficients govern the response at the fundamental frequency and its interaction with the bending and higher-order modes.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 12. ELASTIC FOUNDATION -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s12">
+  <h2><span class="sec-num">12.</span> Two-Parameter Elastic Foundation</h2>
+
+  <p>The plate rests on a two-parameter Winkler–Pasternak foundation model. The foundation reaction per unit area is \(q_f = K_1 w_0 - K_2 \nabla^2 w_0\), where \(K_1\) is the Winkler (normal spring) stiffness and \(K_2\) is the Pasternak (shear layer) stiffness. For the three-layer foundation model employed here (upper spring, shear layer, lower spring), the effective parameters are:</p>
+
+  <div class="eq-block green">
+    <span class="eq-caption green">Effective foundation parameters</span>
+    \[K_1 = \frac{K_l\,K_u}{K_l + K_u}, \qquad K_2 = \frac{K_s\,K_u}{K_l + K_u} \tag{31}\]
+  </div>
+
+  <p>where the dimensional stiffnesses are \(K_u = \bar{K}_u D_m/a^4\), \(K_l = \bar{K}_l D_m/a^4\), \(K_s = \bar{K}_s D_m/a^2\), and \(D_m = E_{Cu}h^3/[12(1-\nu_{Cu}^2)]\) is the copper reference flexural rigidity. The nondimensional parameters \(\bar{K}_u, \bar{K}_l, \bar{K}_s\) are specified as model inputs.</p>
+
+  <p>The foundation contribution to the Galerkin integral is (Eq. 32 in source):</p>
+
+  <div class="eq-block green">
+    <span class="eq-caption green">Foundation Galerkin integral \(S_2\)</span>
+    \[S_2 = \frac{1}{8\,a\,b\,m\,\pi}\!\left(b^2 K_2 m^2\pi^2 + a^2\!\left(b^2 K_1 + K_2 n^2\pi^2\right)\right)\!\left(-2m\pi + \sin 2m\pi\right) \tag{32}\]
+  </div>
+
+  <p>When no foundation is present, \(K_1 = K_2 = 0\) and therefore \(S_2 = 0\).</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 13. GALERKIN METHOD -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s13">
+  <h2><span class="sec-num">13.</span> Galerkin Solution Procedure</h2>
+
+  <p>The governing PDEs are solved via the Galerkin method. The assumed mode shapes for a simply supported rectangular plate satisfy the boundary conditions exactly:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Trial deflection and rotation modes</span>
+    \[w_0 = W\sin\!\tfrac{m\pi x}{a}\sin\!\tfrac{n\pi y}{b}, \quad \phi_x = X\cos\!\tfrac{m\pi x}{a}\sin\!\tfrac{n\pi y}{b}, \quad \phi_y = Y\sin\!\tfrac{m\pi x}{a}\cos\!\tfrac{n\pi y}{b} \tag{33}\]
+  </div>
+
+  <p>Substituting into the governing equations and integrating over the plate area, one obtains a nonlinear algebraic system in the amplitudes \(W\), \(X\), \(Y\). The rotational DOFs \(X\) and \(Y\) are eliminated via static condensation of the linear part of the system, leading to the following Galerkin integral coefficients \(V_{ij}\).</p>
+
+  <h3>Structure of the Galerkin integrals</h3>
+  <p>The Galerkin integrals arise from three coupled equations: the out-of-plane equilibrium (producing \(V_{11}, V_{12}, V_{13}, V_{14}, V_{15}, V_{16}, V_{17}, V_{18}, V_{19}\)), and the two rotational equilibrium equations (producing \(V_{21}, V_{22}, V_{23}, V_{24}\) and \(V_{31}, V_{32}, V_{33}, V_{34}\), respectively). These integrals encode all geometric, material, and foundation effects. Their explicit forms (Eq. 31 in source) are lengthy; representative leading terms are:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Primary buckling Galerkin integral \(V_{11}\) (linear in \(W\))</span>
+    \[V_{11} = \frac{\pi}{8a^3 b^3 m}\!\left[a^4 n^4\pi^2(R_{33}S_{1,14}+S_{13}) + b^4(m^4\pi^2(S_{11}+R_{33}S_{1,12})-a^2 m^2 S_{14}) + a^2 b^2 n^2(\cdots)\right]\!(2m\pi-\sin 2m\pi) \tag{34}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Nonlinear Galerkin integral \(V_{13}\) (cubic in \(W\))</span>
+    \[V_{13} = -\frac{mn^2\pi^3}{8ab}\!\left[4m\pi(R_{11}+R_{21}) - 2(2R_{11}+R_{21})\sin 2m\pi + R_{11}\sin 4m\pi\right] \tag{35}\]
+  </div>
+
+  <div class="eq-block">
+    <span class="eq-caption">Load weighting integrals</span>
+    \[V_{18} = -\frac{bm\pi(2m\pi-\sin 2m\pi)}{8a}, \qquad V_{19} = -\frac{an^2\pi(2m\pi-\sin 2m\pi)}{8bm} \tag{36}\]
+  </div>
+
+  <p>All \(S_{ij}\) quantities appearing inside \(V_{11}\) and the other integrals are algebraic combinations of the stiffness matrices and the inverted coefficients \(C_{ij}\); their explicit forms span Appendix A of the source and are implemented in the <code>S-coefficient</code> block of the code.</p>
+
+  <h3>Rotational DOF condensation — \(P_{ij}\) coefficients</h3>
+  <p>Eliminating the rotational amplitudes \(X\) and \(Y\) from the linear part of the Galerkin system gives:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Postbuckling amplitude condensation coefficients (Eq. 34 in source)</span>
+    \[\mathrm{Den}_P = V_{24}\,V_{33} - V_{23}\,V_{34} \tag{37a}\]
+    \[P_{11} = -\frac{V_{24}V_{31} - V_{21}V_{34}}{\mathrm{Den}_P}, \quad P_{12} = -\frac{V_{24}V_{32} - V_{22}V_{34}}{\mathrm{Den}_P} \tag{37b}\]
+    \[P_{21} = -\frac{V_{21}V_{33} - V_{23}V_{31}}{\mathrm{Den}_P}, \quad P_{22} = -\frac{V_{22}V_{33} - V_{23}V_{32}}{\mathrm{Den}_P} \tag{37c}\]
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 14. POSTBUCKLING PATH -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s14">
+  <h2><span class="sec-num">14.</span> Postbuckling Equilibrium Path</h2>
+
+  <p>After condensation of the rotational DOFs, the load–deflection relation reduces to a polynomial in the normalized deflection amplitude \(W/h\). The three postbuckling coefficients are (Eqs. 38–39 in source):</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Common denominator factor</span>
+    \[\mathcal{T} = \frac{1}{\chi_1\,V_{18} + \chi_2\,V_{19}} \tag{38}\]
+  </div>
+
+  <p>where \(\chi_1 = -1\) always (axial compression in the \(x\)-direction), and \(\chi_2 = -1\) for biaxial loading or \(\chi_2 = 0\) for uniaxial loading.</p>
+
+  <div class="eq-block amber">
+    <span class="eq-caption amber">Critical (onset) buckling load coefficient \(\lambda_0\)</span>
+    \[\lambda_0 = -\left(S_2 + V_{11} + P_{11}\,V_{14} + P_{21}\,V_{15}\right)\cdot\mathcal{T} \tag{39}\]
+  </div>
+
+  <div class="eq-block amber">
+    <span class="eq-caption amber">Linear postbuckling slope \(\lambda_1\)</span>
+    \[\lambda_1 = -h\left(V_{12} + P_{12}\,V_{14} + P_{22}\,V_{15} + P_{11}\,V_{16} + P_{21}\,V_{17}\right)\cdot\mathcal{T} \tag{40}\]
+  </div>
+
+  <div class="eq-block amber">
+    <span class="eq-caption amber">Nonlinear postbuckling curvature \(\lambda_2\)</span>
+    \[\lambda_2 = -h^2\left(V_{13} + P_{12}\,V_{16} + P_{22}\,V_{17}\right)\cdot\mathcal{T} \tag{41}\]
+  </div>
+
+  <p>The complete postbuckling equilibrium path is then:</p>
+
+  <div class="eq-block" style="border-left-color: #7c3aed; background: #f5f3ff;">
+    <span class="eq-caption" style="color:#5b21b6;">Postbuckling load–deflection relation (Eq. 38 in source)</span>
+    \[\bar{N} = \lambda_0 + \lambda_1\!\left(\frac{W}{h}\right) + \lambda_2\!\left(\frac{W}{h}\right)^{\!2} \tag{42}\]
+  </div>
+
+  <p>This is a quadratic polynomial in the normalized central deflection \(W/h\). For symmetric plates (U-WGr, X-WGr, O-WGr symmetric patterns), the coupling matrices \(B_{ij} = 0\), which forces \(\lambda_1 = 0\) and the path becomes a symmetric parabola opening upward (stable postbuckling). For asymmetric FGM plates \(B_{ij} \neq 0\), the linear term \(\lambda_1\) is in general nonzero.</p>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- 15. NONDIMENSIONAL FORM -->
+<!-- ══════════════════════════════════ -->
+<div class="section" id="s15">
+  <h2><span class="sec-num">15.</span> Nondimensionalization</h2>
+
+  <p>All results are reported in nondimensional form. The critical buckling load is nondimensionalized using the elastic modulus of the reference phase (copper for FG-GOEAM, base metal for power-law FGM) and the plate geometry:</p>
+
+  <div class="eq-block">
+    <span class="eq-caption">Nondimensional critical buckling load</span>
+    \[\bar{N}_{cr} = \lambda_0\,\frac{a^2}{E_m\,h^3} \tag{43}\]
+  </div>
+
+  <p>where \(E_m\) is the reference elastic modulus (\(E_{Cu}\) for FG-GOEAM or \(E_m\) for power-law FGM). This nondimensionalization removes the geometric and stiffness scales, allowing direct comparison across different plate thicknesses, aspect ratios, and material systems.</p>
+
+  <h3>Summary of Solution Flow</h3>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-body">
+        <strong>Material evaluation</strong>
+        <span>Eq. (3)–(8): Halpin–Tsai + modification functions → layer-wise \(E(z), \nu(z), \alpha(z)\)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-body">
+        <strong>Stiffness integration</strong>
+        <span>Eq. (12)–(13), (16)–(18): compute \(Q_{ij}\) or \(C_{ij}\), then integrate → \(A,B,D,E,F,H\) and thermal resultants</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-body">
+        <strong>Static condensation <span class="q3d-only">Quasi-3D only</span></strong>
+        <span>Eq. (19)–(22): Schur complement of thickness block → condensed \(A^c, B^c, D^c, E^c, F^c, H^c\)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-body">
+        <strong>Coefficient computation</strong>
+        <span>Eq. (27)–(30): inverted stiffness \(C_{ij}\), geometric \(J_{ij}\), stress function \(R_{ij}\)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-body">
+        <strong>Galerkin integration</strong>
+        <span>Eq. (32)–(37): foundation \(S_2\), all \(V_{ij}\) and rotational condensation \(P_{ij}\)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-body">
+        <strong>Postbuckling path</strong>
+        <span>Eq. (38)–(43): \(\lambda_0, \lambda_1, \lambda_2\) → \(\bar{N}_{cr}\) and full load–deflection curve</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-key" style="margin-top:1.5rem;">
+    <b>Key methodological point:</b> Steps 1–2 and 4–6 are identical for both HSDT and Quasi-3D. Step 3 is the sole addition in the Quasi-3D approach. The magnitude of the difference between the two theories is governed entirely by how much the through-thickness property gradient causes \(\det K\) in Eq. (20) to deviate from the product of diagonal terms — which is zero for a homogeneous plate (U-WGr) and increases with the strength of the gradient (O-WGr &gt; X-WGr &gt; U-WGr).
+  </div>
+</div>
+
+<hr>
+<p style="font-size:0.78rem; color:var(--muted); font-family:'Inter',sans-serif; text-align:center; padding-bottom:1rem;">
+  FG-GOEAM Plate Postbuckling — Methodological Document &nbsp;·&nbsp; Equations derived from MATLAB implementation &nbsp;·&nbsp; Rendered with MathJax
+</p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FG-GOEAM Plate — Complete Mathematical Formulation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(','\\)'],['$','$']], displayMath: [['\\[','\\]'],['$$','$$']], tags:'ams' },
+      options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+    };
+  </script>
+  <style>
+    :root {
+      --bg:#060b18; --bg2:#0d1424; --card:rgba(13,20,36,0.9);
+      --border:rgba(255,255,255,0.07); --border-hi:rgba(99,102,241,0.4);
+      --indigo:#6366f1; --cyan:#06b6d4; --emerald:#10b981;
+      --rose:#f43f5e; --amber:#f59e0b; --violet:#8b5cf6;
+      --text:#e2e8f0; --muted:#64748b; --soft:#94a3b8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg);color:var(--text);line-height:1.75;
+      background-image:
+        radial-gradient(ellipse 70% 50% at 5% 0%,rgba(99,102,241,0.07) 0%,transparent 60%),
+        radial-gradient(ellipse 50% 40% at 95% 100%,rgba(6,182,212,0.06) 0%,transparent 60%);
+      background-attachment:fixed;
+    }
+
+    /* NAV */
+    nav{
+      position:sticky;top:0;z-index:200;
+      background:rgba(6,11,24,0.95);backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--border);
+      padding:0.65rem 2rem;display:flex;align-items:center;
+      gap:0;flex-wrap:wrap;overflow-x:auto;
+    }
+    .brand{font-weight:800;font-size:0.9rem;color:#fff;margin-right:1.5rem;white-space:nowrap;}
+    .nav-group{display:flex;gap:0.2rem;flex-wrap:wrap;}
+    nav a{
+      font-size:0.78rem;color:var(--muted);text-decoration:none;
+      padding:0.28rem 0.7rem;border-radius:6px;white-space:nowrap;
+      transition:color .2s,background .2s;
+    }
+    nav a:hover{color:#fff;background:rgba(255,255,255,0.07);}
+
+    /* LAYOUT */
+    .container{max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem;}
+
+    /* HERO */
+    .hero{padding:3.5rem 0 2rem;text-align:center;}
+    .badge{
+      display:inline-block;border-radius:50px;padding:0.3rem 1rem;
+      background:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(6,182,212,0.15));
+      border:1px solid rgba(99,102,241,0.4);
+      font-size:0.75rem;font-weight:700;letter-spacing:0.06em;
+      color:#a5b4fc;margin-bottom:1.2rem;
+    }
+    .hero h1{
+      font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:800;
+      background:linear-gradient(135deg,#fff 20%,#818cf8 60%,#22d3ee);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      margin-bottom:0.8rem;line-height:1.2;
+    }
+    .hero p{color:var(--muted);font-size:0.97rem;max-width:700px;margin:0 auto;}
+
+    /* TOC */
+    .toc{
+      background:rgba(13,20,36,0.8);border:1px solid var(--border);
+      border-radius:14px;padding:1.5rem 2rem;margin-bottom:3rem;
+    }
+    .toc h3{font-size:0.82rem;font-weight:700;color:#a5b4fc;letter-spacing:0.06em;
+             text-transform:uppercase;margin-bottom:0.9rem;}
+    .toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.35rem 1rem;}
+    .toc a{
+      font-size:0.82rem;color:var(--soft);text-decoration:none;
+      padding:0.15rem 0;display:block;
+      transition:color .2s;
+    }
+    .toc a:hover{color:#c7d2fe;}
+    .toc a span{color:var(--muted);margin-right:0.4rem;font-family:'JetBrains Mono',monospace;font-size:0.75rem;}
+
+    /* SECTION */
+    .sec{margin-bottom:3.5rem;scroll-margin-top:65px;}
+    .sec-header{
+      display:flex;align-items:center;gap:0.9rem;
+      margin-bottom:1.2rem;
+      padding-bottom:0.9rem;
+      border-bottom:1px solid var(--border);
+    }
+    .sec-icon{
+      width:38px;height:38px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;flex-shrink:0;
+    }
+    .sec-header h2{font-size:1.2rem;font-weight:700;color:#fff;}
+    .sec-header p{font-size:0.82rem;color:var(--muted);}
+    .sec-desc{font-size:0.88rem;color:var(--soft);margin-bottom:1.2rem;line-height:1.7;}
+
+    /* EQ BLOCK */
+    .eq{
+      background:rgba(0,0,0,0.4);
+      border:1px solid var(--border);
+      border-left:3px solid var(--indigo);
+      border-radius:10px;padding:1.1rem 1.5rem;
+      margin:0.9rem 0;overflow-x:auto;
+    }
+    .eq.cyan{border-left-color:var(--cyan);}
+    .eq.emerald{border-left-color:var(--emerald);}
+    .eq.amber{border-left-color:var(--amber);}
+    .eq.rose{border-left-color:var(--rose);}
+    .eq.violet{border-left-color:var(--violet);}
+    .eq-label{
+      font-size:0.7rem;font-weight:700;letter-spacing:0.07em;
+      text-transform:uppercase;color:#818cf8;margin-bottom:0.45rem;
+    }
+    .eq-label.c{color:#22d3ee;} .eq-label.g{color:#6ee7b7;}
+    .eq-label.a{color:#fbbf24;} .eq-label.r{color:#f87171;}
+    .eq-label.v{color:#c084fc;}
+
+    /* CARD */
+    .card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:14px;padding:1.6rem;margin-bottom:1.2rem;
+      backdrop-filter:blur(8px);
+    }
+    .card h3{font-size:0.92rem;font-weight:700;color:#c7d2fe;margin-bottom:0.8rem;}
+    .card p{font-size:0.85rem;color:var(--soft);margin-top:0.5rem;}
+
+    /* GRID */
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+    @media(max-width:800px){.g2{grid-template-columns:1fr;}}
+
+    /* TABLE */
+    .tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);margin:0.8rem 0;}
+    table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+    thead tr{background:rgba(99,102,241,0.12);}
+    thead th{padding:0.6rem 1rem;text-align:left;font-size:0.72rem;font-weight:700;
+             letter-spacing:0.05em;text-transform:uppercase;color:#a5b4fc;
+             border-bottom:1px solid var(--border);}
+    tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);}
+    tbody td{padding:0.5rem 1rem;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.78rem;}
+    tbody td.s{font-family:'Inter',sans-serif;color:var(--soft);}
+
+    /* NOTE */
+    .note{
+      background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2);
+      border-radius:10px;padding:0.9rem 1.2rem;margin:0.8rem 0;
+      font-size:0.83rem;color:#a7f3d0;
+    }
+    .note b{color:#6ee7b7;}
+
+    /* DIFF TAG */
+    .diff-tag{
+      display:inline-block;padding:0.18rem 0.55rem;border-radius:5px;
+      font-size:0.7rem;font-weight:700;margin-left:0.4rem;
+      background:rgba(6,182,212,0.18);color:#67e8f9;border:1px solid rgba(6,182,212,0.3);
+    }
+    .diff-tag.new{background:rgba(16,185,129,0.18);color:#6ee7b7;border-color:rgba(16,185,129,0.3);}
+
+    hr.div{border:none;border-top:1px solid var(--border);margin:2rem 0;}
+    .mono{font-family:'JetBrains Mono',monospace;font-size:0.85em;color:#c7d2fe;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">FG-GOEAM Formulation</span>
+  <div class="nav-group">
+    <a href="#s1">§1 Material</a>
+    <a href="#s2">§2 Volume Fraction</a>
+    <a href="#s3">§3 Stiffness (Q)</a>
+    <a href="#s4">§4 Stiffness (C) Q3D</a>
+    <a href="#s5">§5 Integrals A,B,D…</a>
+    <a href="#s6">§6 Condensation</a>
+    <a href="#s6b">§6.5 Governing Eqs.</a>
+    <a href="#s7">§7 C Coefficients</a>
+    <a href="#s8">§8 J Coefficients</a>
+    <a href="#s9">§9 S Coefficients</a>
+    <a href="#s10">§10 R Coefficients</a>
+    <a href="#s11">§11 Foundation S2</a>
+    <a href="#s12">§12 V Coefficients</a>
+    <a href="#s13">§13 P Coefficients</a>
+    <a href="#s14">§14 Buckling</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <div class="badge">HSDT · Quasi-3D · FG-GOEAM · Complete Formulation</div>
+  <h1>All Mathematical Formulae Used in the Code</h1>
+  <p>From the material model to the buckling load, every equation used in the <code>FG_GOEAM.m</code>, <code>FG_GOEAM_stretch.m</code>, <code>Parameters_Analytical_Solution.m</code>, and <code>Parameters_stretch.m</code> files.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h3>Table of Contents</h3>
+  <div class="toc-grid">
+    <a href="#s1"><span>§1</span>Material Properties</a>
+    <a href="#s2"><span>§2</span>Volume Fraction Distribution</a>
+    <a href="#s3"><span>§3</span>HSDT — Q stiffness constants</a>
+    <a href="#s4"><span>§4</span>Quasi-3D — C stiffness constants</a>
+    <a href="#s5"><span>§5</span>Thickness Integrals (A,B,D,E,F,H)</a>
+    <a href="#s6"><span>§6</span>Static Condensation (Quasi-3D)</a>
+    <a href="#s7"><span>§7</span>Inverted Stiffness C Coefficients (Eq. 19)</a>
+    <a href="#s8"><span>§8</span>Geometric J Coefficients (Eq. 21)</a>
+    <a href="#s9"><span>§9</span>S Coefficients (Appendix A)</a>
+    <a href="#s10"><span>§10</span>Stress Function R Coefficients (Eq. 28)</a>
+    <a href="#s11"><span>§11</span>Foundation Contribution S₂ (Eq. 32)</a>
+    <a href="#s12"><span>§12</span>Galerkin V Coefficients (Eq. 31)</a>
+    <a href="#s13"><span>§13</span>Postbuckling P Coefficients (Eq. 34)</a>
+    <a href="#s14"><span>§14</span>Buckling Loads (Eq. 38–39)</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §1 MATERIAL -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s1">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(99,102,241,0.15);">🧱</div>
+    <div>
+      <h2>§1 — Material Properties (FG-GOEAM)</h2>
+      <p>FG_GOEAM.m · FG_GOEAM_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">The material consists of two components: Copper (Cu) matrix + Graphene (Gr) reinforcement. The effective properties for each layer are calculated using the Halpin–Tsai model + modification functions.</p>
+
+  <div class="card">
+    <h3>Material Constants (Values in Code)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Symbol</th><th>Material</th><th>Value</th><th>Unit</th></tr></thead>
+        <tbody>
+          <tr><td>$E_{Gr}$</td><td class="s">Graphene elastic modulus</td><td>929.57 × 10⁹</td><td class="s">Pa</td></tr>
+          <tr><td>$\nu_{Gr}$</td><td class="s">Graphene Poisson ratio</td><td>0.22</td><td class="s">—</td></tr>
+          <tr><td>$\alpha_{Gr}$</td><td class="s">Graphene thermal expansion coefficient</td><td>−3.98 × 10⁻⁶</td><td class="s">1/K</td></tr>
+          <tr><td>$\rho_{Gr}$</td><td class="s">Graphene density</td><td>1800</td><td class="s">kg/m³</td></tr>
+          <tr><td>$E_{Cu}$</td><td class="s">Copper elastic modulus</td><td>65.79 × 10⁹</td><td class="s">Pa</td></tr>
+          <tr><td>$\nu_{Cu}$</td><td class="s">Copper Poisson ratio</td><td>0.387</td><td class="s">—</td></tr>
+          <tr><td>$\alpha_{Cu}$</td><td class="s">Copper thermal expansion coefficient</td><td>16.51 × 10⁻⁶</td><td class="s">1/K</td></tr>
+          <tr><td>$\rho_{Cu}$</td><td class="s">Copper density</td><td>8800</td><td class="s">kg/m³</td></tr>
+          <tr><td>$l_{Gr}$</td><td class="s">Graphene length (Halpin–Tsai)</td><td>83.76 × 10⁻¹⁰</td><td class="s">m</td></tr>
+          <tr><td>$t_{Gr}$</td><td class="s">Graphene thickness (Halpin–Tsai)</td><td>3.4 × 10⁻¹⁰</td><td class="s">m</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Halpin–Tsai Parameters</h3>
+    <div class="eq-label">Geometric parameter and Halpin–Tsai coefficient</div>
+    <div class="eq">
+      \[\xi = \frac{2\,l_{Gr}}{t_{Gr}}, \qquad \eta = \frac{E_{Gr}/E_{Cu} - 1}{E_{Gr}/E_{Cu} + \xi}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Modification Functions (Temperature & Volume Fraction Dependent)</h3>
+    <div class="eq-label">Elastic modulus modification function</div>
+    <div class="eq">
+      \[f_E = 1.11 - 1.22\,V_{Gr} - 0.134\,\frac{T}{T_0} + 0.559\,V_{Gr}\frac{T}{T_0} - 5.5\,H_{Gr}V_{Gr} + 38\,H_{Gr}V_{Gr}^2 - 20.6\,H_{Gr}^2 V_{Gr}^2\]
+    </div>
+    <div class="eq-label" style="margin-top:0.8rem;">Poisson ratio modification function</div>
+    <div class="eq">
+      \[f_\nu = 1.01 - 1.43\,V_{Gr} + 0.165\,\frac{T}{T_0} - 16.8\,H_{Gr}V_{Gr} - 1.1\,H_{Gr}V_{Gr}\frac{T}{T_0} + 16\,H_{Gr}^2 V_{Gr}^2\]
+    </div>
+    <div class="eq-label" style="margin-top:0.8rem;">Thermal expansion modification function</div>
+    <div class="eq">
+      \[f_\alpha = 0.794 - 16.8\,V_{Gr}^2 - 0.0279\left(\frac{T}{T_0}\right)^2 + 0.182\,\frac{T}{T_0}(1 + V_{Gr})\]
+    </div>
+    <p>Here \(T_0 = 300\) K is the reference temperature, \(H_{Gr}\) is the weight fraction of the hollow graphene, and \(V_{Gr}\) is the local volume fraction of graphene.</p>
+  </div>
+
+  <div class="card">
+    <h3>Effective Material Properties (For Each Layer)</h3>
+    <div class="eq-label">Elastic modulus (Halpin–Tsai + modification)</div>
+    <div class="eq">
+      \[E = \frac{(1 + \xi\,\eta\,V_{Gr})\,E_{Cu}\,f_E}{1 - \eta\,V_{Gr}}, \qquad V_{Cu} = 1 - V_{Gr}\]
+    </div>
+    <div class="eq-label" style="margin-top:0.8rem;">Poisson ratio</div>
+    <div class="eq">
+      \[\nu = \left(\nu_{Gr}\,V_{Gr} + \nu_{Cu}\,V_{Cu}\right)f_\nu\]
+    </div>
+    <div class="eq-label" style="margin-top:0.8rem;">Thermal expansion coefficient</div>
+    <div class="eq">
+      \[\alpha = \left(\alpha_{Gr}\,V_{Gr} + \alpha_{Cu}\,V_{Cu}\right)f_\alpha\]
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §2 VOLUME FRACTION DISTRIBUTION -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s2">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(6,182,212,0.15);">📐</div>
+    <div>
+      <h2>§2 — Graphene Volume Fraction Distribution</h2>
+      <p>GOri_distribution.m · FG_GOEAM.m · FG_GOEAM_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">The distribution of graphene across the thickness is defined by three different patterns. \(V_{Gr}^s\) denotes the global graphene volume fraction, and \(z_{mid}\) is the mid-plane coordinate of the layer.</p>
+
+  <div class="card">
+    <h3>Weight Fraction to Volume Fraction Conversion</h3>
+    <div class="eq-label">Global graphene volume fraction</div>
+    <div class="eq">
+      \[V_{Gr}^s = \frac{W_{Gr}}{W_{Gr} + (\rho_{Gr}/\rho_{Cu})(1 - W_{Gr})}\]
+    </div>
+    <p>Here \(W_{Gr}\) is the graphene weight fraction (e.g., 0.025 = 2.5%).</p>
+  </div>
+
+  <div class="card">
+    <h3>Three Distribution Patterns (For each layer \(k\), with \(z_{mid}\) being the layer mid-plane)</h3>
+    <div class="g2">
+      <div>
+        <div class="eq-label">U-WGr (Uniform)</div>
+        <div class="eq">
+          \[V_{Gr}(z) = V_{Gr}^s\]
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);">Graphene is uniformly distributed across the thickness.</p>
+      </div>
+      <div>
+        <div class="eq-label">X-WGr (Concentrated at the surfaces)</div>
+        <div class="eq">
+          \[V_{Gr}(z) = 2\,V_{Gr}^s \cdot \frac{2|z_{mid}|}{h}\]
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);">Maximum at the surfaces, zero at the mid-plane.</p>
+      </div>
+    </div>
+    <div style="margin-top:0.8rem;">
+      <div class="eq-label">O-WGr (Concentrated at the mid-plane)</div>
+      <div class="eq">
+        \[V_{Gr}(z) = 2\,V_{Gr}^s \left(1 - \frac{2|z_{mid}|}{h}\right)\]
+      </div>
+      <p style="font-size:0.8rem;color:var(--muted);">Maximum at the mid-plane, zero at the surfaces.</p>
+    </div>
+    <div class="note" style="margin-top:0.9rem;">
+      <b>Tabaka indeksi:</b> Plaka \(N_L = 10\) tabakaya bölünür. \(k\)-inci tabaka için: \(z_{bot} = (N_L/2-k)\,h/N_L\), \(z_{top} = (N_L/2-k+1)\,h/N_L\), \(z_{mid} = (z_{bot}+z_{top})/2\).
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §3 HSDT — Q_ij -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s3">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(99,102,241,0.15);">🔷</div>
+    <div>
+      <h2>§3 — HSDT: 2D Plane Stress Stiffness Constants \(Q_{ij}\)</h2>
+      <p>FG_GOEAM.m — Standart teori</p>
+    </div>
+  </div>
+  <p class="sec-desc">HSDT (Higher-order Shear Deformation Theory) assumes a plane-stress state: \(\sigma_z = 0\). Under this condition, the effective stiffness constants are:</p>
+
+  <div class="eq-label">2D reduced stiffness constants</div>
+  <div class="eq">
+    \[Q_{11} = Q_{22} = \frac{E}{1 - \nu^2}, \qquad Q_{12} = Q_{21} = \frac{E\,\nu}{1-\nu^2}, \qquad Q_{66} = Q_{44} = Q_{55} = \frac{E}{2(1+\nu)}\]
+  </div>
+  <div class="note">
+    <b>Important:</b> The denominator \(1-\nu^2\) accounts only for the in-plane Poisson coupling (\(x\)–\(y\)). The transverse (\(z\)) Poisson effect is neglected.
+  </div>
+
+  <div class="card">
+    <h3>Thermal Force Integrand Functions (HSDT)</h3>
+    <div class="eq-label">Thermal load coefficient</div>
+    <div class="eq">
+      \[\beta = (Q_{11} + Q_{12})\,\alpha\,\Delta T, \qquad \Delta T = T - T_0\]
+    </div>
+    <div class="eq-label" style="margin-top:0.8rem;">Thermal forces and moments</div>
+    <div class="eq">
+      \[n_x(z)=n_y(z)=\beta, \quad m_x(z)=m_y(z)=\beta\,z, \quad p_x(z)=p_y(z)=\beta\,z^3\]
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §4 QUASI-3D — C_ij -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s4">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(6,182,212,0.15);">🔶</div>
+    <div>
+      <h2>§4 — Quasi-3D: 3D Elasticity Stiffness Constants \(C_{ij}\) <span class="diff-tag new">YENİ</span></h2>
+      <p>FG_GOEAM_stretch.m — Thickness stretching theory</p>
+    </div>
+  </div>
+  <p class="sec-desc">Quasi-3D theory assumes thickness-direction stretching (\(\varepsilon_z \neq 0\)). Therefore, the full 3D elasticity constants are used:</p>
+
+  <div class="eq-label">3D elasticity constants</div>
+  <div class="eq cyan">
+    \[C_{11} = C_{22} = C_{33} = \frac{E(1-\nu)}{(1+\nu)(1-2\nu)}, \qquad C_{12} = C_{13} = C_{23} = \frac{E\,\nu}{(1+\nu)(1-2\nu)}\]
+  </div>
+
+  <div class="note" style="border-color:rgba(6,182,212,0.3);background:rgba(6,182,212,0.06);color:#a5f3fc;">
+    <b>Difference from HSDT:</b> The denominator contains \((1+\nu)(1-2\nu)\) instead of \((1-\nu^2)\). This fully accounts for the thickness-direction Poisson effect (the feedback from \(\sigma_z \to \varepsilon_z\)).
+  </div>
+
+  <div class="card">
+    <h3>Thickness Stretching Thermal Coefficient</h3>
+    <div class="eq-label c">Quasi-3D thermal thickness force</div>
+    <div class="eq cyan">
+      \[\beta_z = (2\,C_{12} + C_{11})\,\alpha\,\Delta T, \qquad n_z(z) = \beta_z\]
+    </div>
+    <p>The thermal force in the thickness direction is used as a correction term in the condensation (see §6).</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §5 THICKNESS INTEGRALS -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s5">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(139,92,246,0.15);">∫</div>
+    <div>
+      <h2>§5 — Thickness Integrals: \(A,B,D,E,F,H\) Matrices</h2>
+      <p>FG_GOEAM.m · FG_GOEAM_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">The stiffness matrices are obtained by multiplying the material constants by powers of the thickness coordinate \(z\) and integrating through the thickness. The same integration structure is used in both theories — only the integrand differs.</p>
+
+  <div class="eq-label">General integral definition (Eq. 17)</div>
+  <div class="eq violet">
+    \[\left(A_{ij},\;B_{ij},\;D_{ij},\;E_{ij},\;F_{ij},\;H_{ij}\right) = \int_{-h/2}^{h/2} \bar{Q}_{ij}\,\left(1,\;z,\;z^2,\;z^3,\;z^4,\;z^6\right)dz\]
+  </div>
+  <div class="note">
+    <b>For HSDT:</b> \(\bar{Q}_{ij} = Q_{ij}(z)\) &nbsp;|&nbsp; <b>For Quasi-3D:</b> \(\bar{Q}_{ij} = C_{ij}(z)\) (before condensation, with subscript \({}_{3D}\))
+  </div>
+
+  <div class="card">
+    <h3>Numerical Integration (Midpoint Rule, NL=10 layers)</h3>
+    <div class="eq-label v">A matrix terms (the contribution of each layer is summed)</div>
+    <div class="eq violet">
+      \[A_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,(z_{top}^{(k)} - z_{bot}^{(k)})\]
+    </div>
+    <div class="eq-label v" style="margin-top:0.8rem;">B, D, E, F, H matrisleri</div>
+    <div class="eq violet">
+      \[B_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\frac{(z_{top}^{(k)})^2-(z_{bot}^{(k)})^2}{2}, \quad D_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\frac{(z_{top}^{(k)})^3-(z_{bot}^{(k)})^3}{3}\]
+      \[E_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\frac{(z_{top}^{(k)})^4-(z_{bot}^{(k)})^4}{4}, \quad F_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\frac{(z_{top}^{(k)})^5-(z_{bot}^{(k)})^5}{5}\]
+      \[H_{ij} = \sum_{k=1}^{N_L} Q_{ij}^{(k)}\,\frac{(z_{top}^{(k)})^7-(z_{bot}^{(k)})^7}{7}\]
+    </div>
+    <p>Note: The \(H_{ij}\) integral uses \(z^6\); in the numerical integration, the difference of \(z^7/7\) is evaluated.</p>
+  </div>
+
+  <div class="card">
+    <h3>Shear Stiffness Matrices</h3>
+    <div class="eq-label v">Transverse shear terms</div>
+    <div class="eq violet">
+      \[A_{44}=A_{55}=\sum Q_{44}^{(k)}\,\Delta z_k,\quad D_{44}=D_{55}=\sum Q_{44}^{(k)}\,\frac{\Delta(z^3)_k}{3},\quad F_{44}=F_{55}=\sum Q_{44}^{(k)}\,\frac{\Delta(z^5)_k}{5}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Thermal Resultants</h3>
+    <div class="eq-label v">Thermal force, moment and higher-order moment</div>
+    <div class="eq violet">
+      \[N_{xx}^T = N_{yy}^T = \sum_{k=1}^{N_L}\int_{z_{bot}}^{z_{top}}(Q_{11}+Q_{12})\,\alpha\,\Delta T\;dz\]
+      \[M_{xx}^T = M_{yy}^T = \sum_{k=1}^{N_L}\int_{z_{bot}}^{z_{top}}(Q_{11}+Q_{12})\,\alpha\,\Delta T\cdot z\;dz\]
+      \[P_{xx}^T = P_{yy}^T = \sum_{k=1}^{N_L}\int_{z_{bot}}^{z_{top}}(Q_{11}+Q_{12})\,\alpha\,\Delta T\cdot z^3\;dz\]
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §6 CONDENSATION -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s6">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(6,182,212,0.15);">⚙️</div>
+    <div>
+      <h2>§6 — Static Condensation (Quasi-3D) <span class="diff-tag">SADECE Q3D</span></h2>
+      <p>Parameters_stretch.m — This is the key difference from HSDT</p>
+    </div>
+  </div>
+  <p class="sec-desc">The condition \(\sigma_z = 0\) is applied to the 3D constitutive equations, and \(\varepsilon_z\) is mathematically eliminated. This process replaces all stiffness matrices with their "condensed" counterparts.</p>
+
+  <div class="card">
+    <h3>Step 1 — Inverse Operator (Schur Complement)</h3>
+    <div class="eq-label c">Determinant and inverse operator of the 3D stiffness matrix</div>
+    <div class="eq cyan">
+      \[\det K = A_{11}^{3D}\cdot D_{11}^{3D} - \left(B_{11}^{3D}\right)^2\]
+      \[I_{11} = \frac{D_{11}^{3D}}{\det K},\qquad I_{12} = I_{21} = \frac{-B_{11}^{3D}}{\det K},\qquad I_{22} = \frac{A_{11}^{3D}}{\det K}\]
+    </div>
+    <p>Here \(A_{11}^{3D}=\int C_{11}\,dz\), \(B_{11}^{3D}=\int C_{11}\,z\,dz\), and \(D_{11}^{3D}=\int C_{11}\,z^2\,dz\) (from the \(C_{ij}\) integrals in §5).</p>
+  </div>
+
+  <div class="card">
+    <h3>Step 2 — Condensed A Matrix</h3>
+    <div class="eq cyan">
+      \[A_{11}^c = A_{11}^{3D} - A_{12}^{3D}\!\left(I_{11}\,A_{12}^{3D} + I_{12}\,B_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,A_{12}^{3D} + I_{22}\,B_{12}^{3D}\right)\]
+      \[A_{12}^c = A_{12}^{3D} - A_{12}^{3D}\!\left(I_{11}\,A_{12}^{3D} + I_{12}\,B_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,A_{12}^{3D} + I_{22}\,B_{12}^{3D}\right)\]
+      \[A_{22}^c = A_{11}^c,\quad A_{21}^c = A_{12}^c\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step 3 — Condensed B Matrix</h3>
+    <div class="eq cyan">
+      \[B_{11}^c = B_{11}^{3D} - A_{12}^{3D}\!\left(I_{11}\,B_{12}^{3D} + I_{12}\,D_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,B_{12}^{3D} + I_{22}\,D_{12}^{3D}\right)\]
+      \[B_{12}^c = B_{12}^{3D} - A_{12}^{3D}\!\left(I_{11}\,B_{12}^{3D} + I_{12}\,D_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,B_{12}^{3D} + I_{22}\,D_{12}^{3D}\right)\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step 4 — Condensed D Matrix</h3>
+    <div class="eq cyan">
+      \[D_{11}^c = D_{11}^{3D} - B_{12}^{3D}\!\left(I_{11}\,B_{12}^{3D} + I_{12}\,D_{12}^{3D}\right) - D_{12}^{3D}\!\left(I_{21}\,B_{12}^{3D} + I_{22}\,D_{12}^{3D}\right)\]
+      \[D_{12}^c = D_{12}^{3D} - B_{12}^{3D}\!\left(I_{11}\,B_{12}^{3D} + I_{12}\,D_{12}^{3D}\right) - D_{12}^{3D}\!\left(I_{21}\,B_{12}^{3D} + I_{22}\,D_{12}^{3D}\right)\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step 5 — Condensed E, F, H Matrices</h3>
+    <div class="eq cyan">
+      \[E_{11}^c = E_{11}^{3D} - A_{12}^{3D}\!\left(I_{11}\,E_{12}^{3D} + I_{12}\,F_{12}^{3D}\right) - B_{12}^{3D}\!\left(I_{21}\,E_{12}^{3D} + I_{22}\,F_{12}^{3D}\right)\]
+      \[F_{11}^c = F_{11}^{3D} - B_{12}^{3D}\!\left(I_{11}\,E_{12}^{3D} + I_{12}\,F_{12}^{3D}\right) - D_{12}^{3D}\!\left(I_{21}\,E_{12}^{3D} + I_{22}\,F_{12}^{3D}\right)\]
+      \[H_{11}^c = H_{11}^{3D} - E_{12}^{3D}\!\left(I_{11}\,E_{12}^{3D} + I_{12}\,F_{12}^{3D}\right) - F_{12}^{3D}\!\left(I_{21}\,E_{12}^{3D} + I_{22}\,F_{12}^{3D}\right)\]
+    </div>
+    <p>The \({}_{12}\) and \({}_{21}\) elements for each matrix are calculated using the same formula.</p>
+  </div>
+
+  <div class="card">
+    <h3>Step 6 — Thermal Force Correction</h3>
+    <div class="eq cyan">
+      \[N_{xx}^{T,c} = N_{xx}^T - A_{12}^{3D}\!\left(I_{11}\,N_{zz}^T\right) - B_{12}^{3D}\!\left(I_{22}\,N_{zz}^T\right)\]
+      \[N_{yy}^{T,c} = N_{yy}^T - A_{12}^{3D}\!\left(I_{11}\,N_{zz}^T\right) - B_{12}^{3D}\!\left(I_{22}\,N_{zz}^T\right)\]
+    </div>
+    <p>The condensed \(A^c, B^c, D^c, E^c, F^c, H^c\) matrices replace the original \(A, B, D, E, F, H\) matrices and are used in all subsequent equations from §7 onwards.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §6.5 Governing Equations -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s6b">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(99,102,241,0.15);">⚖️</div>
+    <div>
+      <h2>§6.5 — Governing Differential Equations (Equilibrium and Compatibility)</h2>
+      <p>Equilibrium and Geometrical Compatibility Equations Based on HSDT Plate Theory</p>
+    </div>
+  </div>
+
+  <div class="sec-desc">
+    Using Reddy's HSDT displacement field and the principle of virtual work, the nonlinear governing equations of motion (equilibrium equations) for the FG-GOEAM plate are expressed as:
+  </div>
+
+  <div class="eq-label">In-plane force equilibrium equations</div>
+  <div class="eq">
+    \[\frac{\partial N_{xx}}{\partial x} + \frac{\partial N_{xy}}{\partial y} = 0\]
+    \[\frac{\partial N_{xy}}{\partial x} + \frac{\partial N_{yy}}{\partial y} = 0\]
+  </div>
+
+  <div class="eq-label cyan">Rotational (moment) equilibrium equations</div>
+  <div class="eq cyan">
+    \[\frac{\partial M_{xx}}{\partial x} + \frac{\partial M_{xy}}{\partial y} - Q_x - c_1 \left(\frac{\partial P_{xx}}{\partial x} + \frac{\partial P_{xy}}{\partial y}\right) + 3c_1 R_x = 0\]
+    \[\frac{\partial M_{xy}}{\partial x} + \frac{\partial M_{yy}}{\partial y} - Q_y - c_1 \left(\frac{\partial P_{xy}}{\partial x} + \frac{\partial P_{yy}}{\partial y}\right) + 3c_1 R_y = 0\]
+  </div>
+
+  <div class="eq-label violet">Transverse (out-of-plane) equilibrium equation</div>
+  <div class="eq violet">
+    \[\left(N_{xx} + N_{xx}^T\right)\frac{\partial^2 w_0}{\partial x^2} + 2N_{xy}\frac{\partial^2 w_0}{\partial x \partial y} + \left(N_{yy} + N_{yy}^T\right)\frac{\partial^2 w_0}{\partial y^2} + \frac{\partial^2 M_{xx}}{\partial x^2} + 2\frac{\partial^2 M_{xy}}{\partial x \partial y} + \frac{\partial^2 M_{yy}}{\partial y^2} - c_1\left(\frac{\partial^2 P_{xx}}{\partial x^2} + 2\frac{\partial^2 P_{xy}}{\partial x \partial y} + \frac{\partial^2 P_{yy}}{\partial y^2}\right) + q - q_f = 0\]
+  </div>
+
+  <div class="sec-desc">
+    where \(q\) is the transverse mechanical load (equal to \(0\) in this postbuckling study), and \(q_f\) is the reaction of the two-parameter Winkler-Pasternak elastic foundation:
+  </div>
+
+  <div class="eq-label emerald">Elastic Foundation Reaction Equation</div>
+  <div class="eq emerald">
+    \[q_f = K_1 w_0 - K_2 \nabla^2 w_0 = K_1 w_0 - K_2 \left(\frac{\partial^2 w_0}{\partial x^2} + \frac{\partial^2 w_0}{\partial y^2}\right)\]
+  </div>
+
+  <div class="sec-desc">
+    To satisfy the in-plane force equilibrium equations identically, the Airy stress function \(f(x, y)\) is introduced:
+  </div>
+
+  <div class="eq-label">Airy Stress Function Definition</div>
+  <div class="eq">
+    \[N_{xx} = \frac{\partial^2 f}{\partial y^2}, \qquad N_{yy} = \frac{\partial^2 f}{\partial x^2}, \qquad N_{xy} = -\frac{\partial^2 f}{\partial x \partial y}\]
+  </div>
+
+  <div class="sec-desc">
+    The geometrical compatibility relation of strains is written in terms of the mid-plane strain components and curvatures as:
+  </div>
+
+  <div class="eq-label rose">Strain Compatibility Relation</div>
+  <div class="eq rose">
+    \[\frac{\partial^2 \varepsilon_{x}^0}{\partial y^2} + \frac{\partial^2 \varepsilon_{y}^0}{\partial x^2} - \frac{\partial^2 \gamma_{xy}^0}{\partial x \partial y} = \left(\frac{\partial^2 w_0}{\partial x \partial y}\right)^2 - \frac{\partial^2 w_0}{\partial x^2}\frac{\partial^2 w_0}{\partial y^2}\]
+  </div>
+
+  <div class="sec-desc">
+    Substituting the inverted constitutive relations into the strain compatibility equation yields the compatibility equation in terms of the stress function \(f\), deflection \(w_0\), and rotation functions (\(\phi_x, \phi_y\)):
+  </div>
+
+  <div class="eq-label amber">Compatibility Equation in terms of Airy Stress Function</div>
+  <div class="eq amber">
+    \[J_{11} \frac{\partial^4 f}{\partial x^4} + J_{12} \frac{\partial^4 f}{\partial x^2 \partial y^2} + J_{13} \frac{\partial^4 f}{\partial y^4} = \left(\frac{\partial^2 w_0}{\partial x \partial y}\right)^2 - \frac{\partial^2 w_0}{\partial x^2}\frac{\partial^2 w_0}{\partial y^2} + J_{21} \frac{\partial^4 w_0}{\partial x^4} + J_{22} \frac{\partial^4 w_0}{\partial x^2 \partial y^2} + J_{23} \frac{\partial^4 w_0}{\partial y^4} + J_{31} \frac{\partial^3 \phi_x}{\partial x^3} + J_{32} \left(\frac{\partial^3 \phi_x}{\partial x \partial y^2} + \frac{\partial^3 \phi_y}{\partial x^2 \partial y}\right) + J_{33} \frac{\partial^3 \phi_y}{\partial y^3}\]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §6.5 Governing Equations -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s6b">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(99,102,241,0.15);">⚖️</div>
+    <div>
+      <h2>§6.5 — Governing Differential Equations (Equilibrium and Compatibility)</h2>
+      <p>Equilibrium and Geometrical Compatibility Equations Based on HSDT Plate Theory</p>
+    </div>
+  </div>
+
+  <div class="sec-desc">
+    Using Reddy's HSDT displacement field and the principle of virtual work, the nonlinear governing equations of motion (equilibrium equations) for the FG-GOEAM plate are expressed as:
+  </div>
+
+  <div class="eq-label">In-plane force equilibrium equations</div>
+  <div class="eq">
+    \[\frac{\partial N_{xx}}{\partial x} + \frac{\partial N_{xy}}{\partial y} = 0\]
+    \[\frac{\partial N_{xy}}{\partial x} + \frac{\partial N_{yy}}{\partial y} = 0\]
+  </div>
+
+  <div class="eq-label cyan">Rotational (moment) equilibrium equations</div>
+  <div class="eq cyan">
+    \[\frac{\partial M_{xx}}{\partial x} + \frac{\partial M_{xy}}{\partial y} - Q_x - c_1 \left(\frac{\partial P_{xx}}{\partial x} + \frac{\partial P_{xy}}{\partial y}\right) + 3c_1 R_x = 0\]
+    \[\frac{\partial M_{xy}}{\partial x} + \frac{\partial M_{yy}}{\partial y} - Q_y - c_1 \left(\frac{\partial P_{xy}}{\partial x} + \frac{\partial P_{yy}}{\partial y}\right) + 3c_1 R_y = 0\]
+  </div>
+
+  <div class="eq-label violet">Transverse (out-of-plane) equilibrium equation</div>
+  <div class="eq violet">
+    \[\left(N_{xx} + N_{xx}^T\right)\frac{\partial^2 w_0}{\partial x^2} + 2N_{xy}\frac{\partial^2 w_0}{\partial x \partial y} + \left(N_{yy} + N_{yy}^T\right)\frac{\partial^2 w_0}{\partial y^2} + \frac{\partial^2 M_{xx}}{\partial x^2} + 2\frac{\partial^2 M_{xy}}{\partial x \partial y} + \frac{\partial^2 M_{yy}}{\partial y^2} - c_1\left(\frac{\partial^2 P_{xx}}{\partial x^2} + 2\frac{\partial^2 P_{xy}}{\partial x \partial y} + \frac{\partial^2 P_{yy}}{\partial y^2}\right) + q - q_f = 0\]
+  </div>
+
+  <div class="sec-desc">
+    where \(q\) is the transverse mechanical load (equal to \(0\) in this postbuckling study), and \(q_f\) is the reaction of the two-parameter Winkler-Pasternak elastic foundation:
+  </div>
+
+  <div class="eq-label emerald">Elastic Foundation Reaction Equation</div>
+  <div class="eq emerald">
+    \[q_f = K_1 w_0 - K_2 \nabla^2 w_0 = K_1 w_0 - K_2 \left(\frac{\partial^2 w_0}{\partial x^2} + \frac{\partial^2 w_0}{\partial y^2}\right)\]
+  </div>
+
+  <div class="sec-desc">
+    To satisfy the in-plane force equilibrium equations identically, the Airy stress function \(f(x, y)\) is introduced:
+  </div>
+
+  <div class="eq-label">Airy Stress Function Definition</div>
+  <div class="eq">
+    \[N_{xx} = \frac{\partial^2 f}{\partial y^2}, \qquad N_{yy} = \frac{\partial^2 f}{\partial x^2}, \qquad N_{xy} = -\frac{\partial^2 f}{\partial x \partial y}\]
+  </div>
+
+  <div class="sec-desc">
+    The geometrical compatibility relation of strains is written in terms of the mid-plane strain components and curvatures as:
+  </div>
+
+  <div class="eq-label rose">Strain Compatibility Relation</div>
+  <div class="eq rose">
+    \[\frac{\partial^2 \varepsilon_{x}^0}{\partial y^2} + \frac{\partial^2 \varepsilon_{y}^0}{\partial x^2} - \frac{\partial^2 \gamma_{xy}^0}{\partial x \partial y} = \left(\frac{\partial^2 w_0}{\partial x \partial y}\right)^2 - \frac{\partial^2 w_0}{\partial x^2}\frac{\partial^2 w_0}{\partial y^2}\]
+  </div>
+
+  <div class="sec-desc">
+    Substituting the inverted constitutive relations into the strain compatibility equation yields the compatibility equation in terms of the stress function \(f\), deflection \(w_0\), and rotation functions (\(\phi_x, \phi_y\)):
+  </div>
+
+  <div class="eq-label amber">Compatibility Equation in terms of Airy Stress Function</div>
+  <div class="eq amber">
+    \[J_{11} \frac{\partial^4 f}{\partial x^4} + J_{12} \frac{\partial^4 f}{\partial x^2 \partial y^2} + J_{13} \frac{\partial^4 f}{\partial y^4} = \left(\frac{\partial^2 w_0}{\partial x \partial y}\right)^2 - \frac{\partial^2 w_0}{\partial x^2}\frac{\partial^2 w_0}{\partial y^2} + J_{21} \frac{\partial^4 w_0}{\partial x^4} + J_{22} \frac{\partial^4 w_0}{\partial x^2 \partial y^2} + J_{23} \frac{\partial^4 w_0}{\partial y^4} + J_{31} \frac{\partial^3 \phi_x}{\partial x^3} + J_{32} \left(\frac{\partial^3 \phi_x}{\partial x \partial y^2} + \frac{\partial^3 \phi_y}{\partial x^2 \partial y}\right) + J_{33} \frac{\partial^3 \phi_y}{\partial y^3}\]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §7 C Coefficients -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s7">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(245,158,11,0.15);">📊</div>
+    <div>
+      <h2>§7 — Inverted Stiffness \(C_{ij}\) Coefficients (Denk. 19)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+
+  <div class="eq-label a">Denominator (determinant-like)</div>
+  <div class="eq amber">
+    \[\text{Denom} = A_{12}\,A_{21} - A_{11}\,A_{22}\]
+  </div>
+
+  <div class="card">
+    <h3>First row coefficients</h3>
+    <div class="eq amber">
+      \[C_{11} = \frac{A_{12}}{\text{Denom}},\qquad C_{12} = -\frac{A_{22}}{\text{Denom}}\]
+      \[C_{13} = -\frac{-A_{22}B_{11} + A_{12}B_{21}}{\text{Denom}},\qquad C_{14} = -\frac{-A_{22}B_{12} + A_{12}B_{22}}{\text{Denom}}\]
+      \[C_{15} = -\frac{-A_{22}E_{11} + A_{12}E_{21}}{\text{Denom}},\qquad C_{16} = -\frac{-A_{22}E_{12} + A_{12}E_{22}}{\text{Denom}}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Second row coefficients</h3>
+    <div class="eq amber">
+      \[C_{21} = \frac{A_{11}}{-\text{Denom}},\qquad C_{22} = -\frac{A_{21}}{-\text{Denom}}\]
+      \[C_{23} = -\frac{-A_{21}B_{11} + A_{11}B_{21}}{-\text{Denom}},\qquad C_{24} = -\frac{-A_{21}B_{12} + A_{11}B_{22}}{-\text{Denom}}\]
+      \[C_{25} = -\frac{-A_{21}E_{11} + A_{11}E_{21}}{-\text{Denom}},\qquad C_{26} = -\frac{-A_{21}E_{12} + A_{11}E_{22}}{-\text{Denom}}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Shear coefficients</h3>
+    <div class="eq amber">
+      \[C_{31} = -\frac{1}{A_{66}},\qquad C_{32} = -\frac{B_{66}}{A_{66}},\qquad C_{33} = -\frac{E_{66}}{A_{66}}\]
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §8 J Coefficients -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s8">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(16,185,129,0.15);">📐</div>
+    <div>
+      <h2>§8 — Geometric \(J_{ij}\) Coefficients (Denk. 21)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">Coefficients of the stress function equation. \(c_1 = 4/(3h^2)\) is the HSDT constant.</p>
+
+  <div class="eq emerald">
+    \[J_{11} = C_{21},\qquad J_{12} = C_{11} + C_{22} - C_{31},\qquad J_{13} = C_{12}\]
+    \[J_{21} = C_{23} - c_1\,C_{25},\qquad J_{22} = C_{13} - c_1\,C_{15} - C_{32} + c_1\,C_{33}\]
+    \[J_{23} = C_{24} - c_1\,C_{26} - C_{32} + c_1\,C_{33},\qquad J_{24} = C_{14} - c_1\,C_{16}\]
+    \[J_{31} = -c_1\,C_{25},\qquad J_{32} = -c_1\,C_{15} - c_1\,C_{26} + 2c_1\,C_{33},\qquad J_{33} = -c_1\,C_{16}\]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §9 S Coefficients -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s9">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(244,63,94,0.15);">🔢</div>
+    <div>
+      <h2>§9 — \(S_{ij}\) Coefficients (Appendix A)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">Coefficients in the Galerkin integral of the governing equations. \(c_2 = 3c_1 = 4/h^2\).</p>
+
+  <div class="card">
+    <h3>S1x — Plate stiffness coefficients</h3>
+    <div class="eq rose">
+      \[S_{11} = -c_1^2 C_{15}E_{11} - c_1^2 C_{25}E_{12} - c_1^2 H_{11}\]
+      \[S_{12} = -c_1^2 C_{16}E_{11} - c_1^2 C_{26}E_{12} - c_1^2 C_{15}E_{21} - c_1^2 C_{25}E_{22} - 4c_1^2 C_{33}E_{66} - c_1^2 H_{12} - c_1^2 H_{21} - 4c_1^2 H_{66}\]
+      \[S_{13} = -c_1^2 C_{16}E_{21} - c_1^2 C_{26}E_{22} - c_1^2 H_{22}\]
+    </div>
+    <div class="eq rose" style="margin-top:0.8rem;">
+      \[S_{14} = A_{55} - 2c_2 D_{55} + c_2^2 F_{55},\qquad S_{15} = A_{44} - 2c_2 D_{44} + c_2^2 F_{44}\]
+      \[S_{16} = S_{14},\qquad S_{19} = S_{15}\]
+    </div>
+    <div class="eq rose" style="margin-top:0.8rem;">
+      \[S_{17} = c_1 C_{13}E_{11} - c_1^2 C_{15}E_{11} + c_1 C_{23}E_{12} - c_1^2 C_{25}E_{12} + c_1 F_{11} - c_1^2 H_{11}\]
+      \[S_{18} = c_1 C_{13}E_{21} - c_1^2 C_{15}E_{21} + c_1 C_{23}E_{22} - c_1^2 C_{25}E_{22} + 2c_1 C_{32}E_{66} - 2c_1^2 C_{33}E_{66} + c_1 F_{21} + 2c_1 F_{66} - c_1^2 H_{21} - 2c_1^2 H_{66}\]
+      \[S_{1,10} = c_1 C_{14}E_{21} - c_1^2 C_{16}E_{21} + c_1 C_{24}E_{22} - c_1^2 C_{26}E_{22} + c_1 F_{22} - c_1^2 H_{22}\]
+      \[S_{1,11} = c_1 C_{14}E_{11} - c_1^2 C_{16}E_{11} + c_1 C_{24}E_{12} - c_1^2 C_{26}E_{12} + 2c_1 C_{32}E_{66} - 2c_1^2 C_{33}E_{66} + c_1 F_{12} + 2c_1 F_{66} - c_1^2 H_{12} - 2c_1^2 H_{66}\]
+      \[S_{1,12} = c_1 C_{11}E_{11} + c_1 C_{21}E_{12},\quad S_{1,13} = c_1 C_{12}E_{11} + c_1 C_{22}E_{12} + c_1 C_{11}E_{21} + c_1 C_{21}E_{22} + 2c_1 C_{31}E_{66}\]
+      \[S_{1,14} = c_1 C_{12}E_{21} + c_1 C_{22}E_{22}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>S2x — \(\phi_x\) rotation equation coefficients</h3>
+    <div class="eq rose">
+      \[S_{21} = -B_{11}c_1 C_{16} - B_{12}c_1 C_{26} - 2B_{66}c_1 C_{33} + c_1^2 C_{16}E_{11} + c_1^2 C_{26}E_{12} + 2c_1^2 C_{33}E_{66} - c_1 F_{12} - 2c_1 F_{66} + c_1^2 H_{12} + 2c_1^2 H_{66}\]
+      \[S_{22} = -B_{11}c_1 C_{15} - B_{12}c_1 C_{25} + c_1^2 C_{15}E_{11} + c_1^2 C_{25}E_{12} - c_1 F_{11} + c_1^2 H_{11}\]
+      \[S_{23} = -A_{55} + 2c_2 D_{55} - c_2^2 F_{55}\]
+      \[S_{24} = B_{11}C_{13} - B_{11}c_1 C_{15} + B_{12}C_{23} - B_{12}c_1 C_{25} + D_{11} - c_1 C_{13}E_{11} + c_1^2 C_{15}E_{11} - c_1 C_{23}E_{12} + c_1^2 C_{25}E_{12} - 2c_1 F_{11} + c_1^2 H_{11}\]
+      \[S_{25} = B_{66}C_{32} - B_{66}c_1 C_{33} + D_{66} - c_1 C_{32}E_{66} + c_1^2 C_{33}E_{66} - 2c_1 F_{66} + c_1^2 H_{66}\]
+      \[S_{26} = S_{23}\]
+      \[S_{27} = B_{11}C_{14} - B_{11}c_1 C_{16} + B_{12}C_{24} - B_{12}c_1 C_{26} + B_{66}C_{32} - B_{66}c_1 C_{33} + D_{12} + D_{66}\]
+      \[\quad - c_1 C_{14}E_{11} + c_1^2 C_{16}E_{11} - c_1 C_{24}E_{12} + c_1^2 C_{26}E_{12} - c_1 C_{32}E_{66} + c_1^2 C_{33}E_{66} - 2c_1 F_{12} - 2c_1 F_{66} + c_1^2 H_{12} + c_1^2 H_{66}\]
+      \[S_{28} = B_{11}C_{11} + B_{12}C_{21} - c_1 C_{11}E_{11} - c_1 C_{21}E_{12}\]
+      \[S_{29} = B_{11}C_{12} + B_{12}C_{22} + B_{66}C_{31} - c_1 C_{12}E_{11} - c_1 C_{22}E_{12} - c_1 C_{31}E_{66}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>S3x — \(\phi_y\) rotation equation coefficients</h3>
+    <div class="eq rose">
+      \[S_{31} = -B_{21}c_1 C_{15} - B_{22}c_1 C_{25} - 2B_{66}c_1 C_{33} + c_1^2 C_{15}E_{21} + c_1^2 C_{25}E_{22} + 2c_1^2 C_{33}E_{66} - c_1 F_{21} - 2c_1 F_{66} + c_1^2 H_{21} + 2c_1^2 H_{66}\]
+      \[S_{32} = -B_{21}c_1 C_{16} - B_{22}c_1 C_{26} + c_1^2 C_{16}E_{21} + c_1^2 C_{26}E_{22} - c_1 F_{22} + c_1^2 H_{22}\]
+      \[S_{33} = -A_{44} + 2c_2 D_{44} - c_2^2 F_{44}\]
+      \[S_{34} = B_{21}C_{13} - B_{21}c_1 C_{15} + B_{22}C_{23} - B_{22}c_1 C_{25} + B_{66}C_{32} - B_{66}c_1 C_{33} + D_{21} + D_{66}\]
+      \[\quad - c_1 C_{13}E_{21} + c_1^2 C_{15}E_{21} - c_1 C_{23}E_{22} + c_1^2 C_{25}E_{22} - c_1 C_{32}E_{66} + c_1^2 C_{33}E_{66} - 2c_1 F_{21} - 2c_1 F_{66} + c_1^2 H_{21} + c_1^2 H_{66}\]
+      \[S_{35} = B_{66}C_{32} - B_{66}c_1 C_{33} + D_{66} - c_1 C_{32}E_{66} + c_1^2 C_{33}E_{66} - 2c_1 F_{66} + c_1^2 H_{66}\]
+      \[S_{36} = B_{21}C_{14} - B_{21}c_1 C_{16} + B_{22}C_{24} - B_{22}c_1 C_{26} + D_{22} - c_1 C_{14}E_{21} + c_1^2 C_{16}E_{21} - c_1 C_{24}E_{22} + c_1^2 C_{26}E_{22} - 2c_1 F_{22} + c_1^2 H_{22}\]
+      \[S_{37} = S_{33},\qquad S_{38} = B_{21}C_{12} + B_{22}C_{22} - c_1 C_{12}E_{21} - c_1 C_{22}E_{22}\]
+      \[S_{39} = B_{21}C_{11} + B_{22}C_{21} + B_{66}C_{31} - c_1 C_{11}E_{21} - c_1 C_{21}E_{22} - c_1 C_{31}E_{66}\]
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §10 R Coefficients -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s10">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(245,158,11,0.15);">📝</div>
+    <div>
+      <h2>§10 — Stress Function \(R_{ij}\) Coefficients (Denk. 28)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">Plate dimensions \(a,b\) and mode numbers \(m,n\). Galerkin coefficients of the Airy stress function.</p>
+
+  <div class="eq-label a">Payda</div>
+  <div class="eq amber">
+    \[\text{Den}_R = \pi\left(b^4 J_{11}m^4 + a^2 b^2 J_{12}m^2 n^2 + a^4 J_{13}n^4\right)\]
+  </div>
+
+  <div class="eq amber">
+    \[R_{11} = \frac{a^2 n^2}{32\,b^2\,J_{11}\,m^2},\qquad R_{21} = \frac{b^2 m^2}{32\,a^2\,J_{13}\,n^2}\]
+    \[R_{31} = \frac{-a\,b^4 J_{21}m^3 - a^3 b^2 J_{22}m\,n^2}{\text{Den}_R}\]
+    \[R_{32} = \frac{-a^2 b^3 J_{23}m^2 n - a^4 b\,J_{24}\,n^3}{\text{Den}_R}\]
+    \[R_{33} = \frac{-\pi\!\left(b^4 J_{31}m^4 + a^2 b^2 J_{32}m^2 n^2 + a^4 J_{33}n^4\right)}{\text{Den}_R}\]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §11 TEMEL S2 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s11">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(16,185,129,0.15);">🏗️</div>
+    <div>
+      <h2>§11 — Winkler–Pasternak Foundation Contribution \(S_2\) (Denk. 32)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+
+  <div class="eq emerald">
+    \[S_2 = \frac{1}{8\,a\,b\,m\,\pi}\left(b^2 K_2 m^2\pi^2 + a^2\!\left(b^2 K_1 + K_2 n^2\pi^2\right)\right)\left(-2m\pi + \sin(2m\pi)\right)\]
+  </div>
+  <div class="card">
+    <h3>Foundation Parameters</h3>
+    <div class="eq emerald">
+      \[K_1 = \frac{K_l\,K_u}{K_l + K_u},\qquad K_2 = \frac{K_s\,K_u}{K_l + K_u}\]
+      \[K_u = \frac{\bar{K}_u\,D_m}{a^4},\quad K_l = \frac{\bar{K}_l\,D_m}{a^4},\quad K_s = \frac{\bar{K}_s\,D_m}{a^2},\quad D_m = \frac{E_{Cu}h^3}{12(1-\nu_{Cu}^2)}\]
+    </div>
+    <p>Dimensionless foundation parameters \(\bar{K}_u, \bar{K}_l, \bar{K}_s\) (upper, lower Winkler and shear). Without a foundation, \(K_1=K_2=S_2=0\).</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §12 V Coefficients -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s12">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(139,92,246,0.15);">∑</div>
+    <div>
+      <h2>§12 — Galerkin \(V_{ij}\) Coefficients (Denk. 31)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">Galerkin integrals are evaluated using the mode shape \(\sin(m\pi x/a)\sin(n\pi y/b)\). All geometric and stiffness information is contained in these coefficients.</p>
+
+  <div class="card">
+    <h3>Main plate integrals</h3>
+    <div class="eq violet">
+      \[V_{11} = \frac{\pi}{8a^3 b^3 m}\!\left[a^4 n^4\pi^2(R_{33}S_{1,14}+S_{13}) + b^4(m^4\pi^2(S_{11}+R_{33}S_{1,12})-a^2 m^2 S_{14}) + a^2 b^2 n^2(m^2\pi^2(R_{33}S_{1,13}+S_{12})-a^2 S_{15})\right]\!(2m\pi-\sin 2m\pi)\]
+    </div>
+    <div class="eq violet" style="margin-top:0.8rem;">
+      \[V_{12} = -\frac{4\pi^2}{3a^3 b^3 m n}\!\left[-\!(1+2(-1)^n)a^2 n^2(-b^2 m^2 R_{33}+16a^2 n^2 R_{21}S_{1,14}) + b^2 m^2(a^2 n^2 R_{33}-16b^2 m^2 R_{11}S_{1,12})(2\cos m\pi+\cos 2m\pi)\right]\sin^2\!\tfrac{m\pi}{2}\sin^2\!\tfrac{n\pi}{2}\]
+    </div>
+    <div class="eq violet" style="margin-top:0.8rem;">
+      \[V_{13} = -\frac{mn^2\pi^3}{8ab}\!\left[4m\pi(R_{11}+R_{21}) - 2(2R_{11}+R_{21})\sin 2m\pi + R_{11}\sin 4m\pi\right]\]
+    </div>
+    <div class="eq violet" style="margin-top:0.8rem;">
+      \[V_{14} = -\frac{1}{8a^3 b^3 m}\!\left[a^4 n^4\pi^3 R_{31}S_{1,14} + b^4(m^4\pi^3 R_{31}S_{1,12}-a^3 m\,S_{16}+am^3\pi^2 S_{17}) + a^2 b^2 mn^2\pi^2(m\pi R_{31}S_{1,13}+a\,S_{18})\right]\!(-2m\pi+\sin 2m\pi)\]
+    </div>
+    <div class="eq violet" style="margin-top:0.8rem;">
+      \[V_{15} = -\frac{1}{8a^3 b^3 m}\!\left[\pi^2(b^4 m^4\pi R_{32}S_{1,12}+a^2 b^2 m^2 n(b\,S_{1,11}+n\pi R_{32}S_{1,13})+a^4 n^3(b\,S_{1,10}+n\pi R_{32}S_{1,14}))-a^4 b^3 n\,S_{19}\right]\!(-2m\pi+\sin 2m\pi)\]
+    </div>
+    <div class="eq violet" style="margin-top:0.8rem;">
+      \[V_{16} = -\frac{4mn\pi^2 R_{31}}{3ab}(1+2(-1)^n+2\cos m\pi+\cos 2m\pi)\sin^2\!\tfrac{m\pi}{2}\sin^2\!\tfrac{n\pi}{2}\]
+      \[V_{17} = -\frac{4mn\pi^2 R_{32}}{3ab}(1+2(-1)^n+2\cos m\pi+\cos 2m\pi)\sin^2\!\tfrac{m\pi}{2}\sin^2\!\tfrac{n\pi}{2}\]
+    </div>
+    <div class="eq violet" style="margin-top:0.8rem;">
+      \[V_{18} = -\frac{bm\pi(2m\pi-\sin 2m\pi)}{8a},\qquad V_{19} = -\frac{an^2\pi(2m\pi-\sin 2m\pi)}{8bm}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>\(\phi_x\) rotation integrals</h3>
+    <div class="eq violet">
+      \[V_{21} = -\frac{1}{8a^2 b}\!\left[b^2 m^2\pi^2(S_{22}+R_{33}S_{28})+a^2(-b^2 S_{23}+n^2\pi^2(S_{21}+R_{33}S_{29}))\right]\!(2m\pi+\sin 2m\pi)\]
+      \[V_{22} = \frac{16(-1+(-1)^n)bm^2\pi R_{11}S_{28}(-1+\cos^3\! m\pi)}{3a^2 n}\]
+      \[V_{23} = -\frac{1}{8a^2 bm\pi}\!\left[ab^2 m^2\pi^2 S_{24}+a^3(n^2\pi^2 S_{25}-b^2 S_{26})+b^2 m^3\pi^3 R_{31}S_{28}+a^2 mn^2\pi^3 R_{31}S_{29}\right]\!(2m\pi+\sin 2m\pi)\]
+      \[V_{24} = -\frac{\pi}{8a^2 b}\!\left[b^2 m^2\pi R_{32}S_{28}+a^2 n(b\,S_{27}+n\pi R_{32}S_{29})\right]\!(2m\pi+\sin 2m\pi)\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>\(\phi_y\) rotation integrals</h3>
+    <div class="eq violet">
+      \[V_{31} = \frac{n}{8ab^2 m}\!\left[a^2 n^2\pi^2(S_{32}+R_{33}S_{38})+b^2(-a^2 S_{33}+m^2\pi^2(S_{31}+R_{33}S_{39}))\right]\!(-2m\pi+\sin 2m\pi)\]
+      \[V_{32} = \frac{16(-1+(-1)^n)an^2\pi R_{21}S_{38}(-1+\cos m\pi)}{3b^2 m}\]
+      \[V_{33} = -\frac{n\pi}{8ab^2 m}\!\left[ab^2 m\,S_{34}+a^2 n^2\pi R_{31}S_{38}+b^2 m^2\pi R_{31}S_{39}\right]\!(2m\pi-\sin 2m\pi)\]
+      \[V_{34} = \frac{1}{8ab^2 m\pi}\!\left[a^2 bn^2\pi^2 S_{36}+b^3(m^2\pi^2 S_{35}-a^2 S_{37})+a^2 n^3\pi^3 R_{32}S_{38}+b^2 m^2 n\pi^3 R_{32}S_{39}\right]\!(-2m\pi+\sin 2m\pi)\]
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §13 P Coefficients -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s13">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(244,63,94,0.15);">🔗</div>
+    <div>
+      <h2>§13 — Postbuckling \(P_{ij}\) Coefficients (Denk. 34)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">Expression of the rotational degrees of freedom in terms of displacement; static condensation is applied.</p>
+
+  <div class="eq-label r">Payda</div>
+  <div class="eq rose">
+    \[\text{Den}_P = V_{24}\,V_{33} - V_{23}\,V_{34}\]
+  </div>
+  <div class="eq rose">
+    \[P_{11} = -\frac{V_{24}V_{31} - V_{21}V_{34}}{\text{Den}_P},\qquad P_{12} = -\frac{V_{24}V_{32} - V_{22}V_{34}}{\text{Den}_P}\]
+    \[P_{21} = -\frac{-V_{23}V_{31} + V_{21}V_{33}}{\text{Den}_P},\qquad P_{22} = -\frac{-V_{23}V_{32} + V_{22}V_{33}}{\text{Den}_P}\]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- §14 BUCKLING LOADS -->
+<!-- ═══════════════════════════════════════ -->
+<div class="sec" id="s14">
+  <div class="sec-header">
+    <div class="sec-icon" style="background:rgba(99,102,241,0.2);">🎯</div>
+    <div>
+      <h2>§14 — Buckling Loads and Postbuckling Equilibrium (Denk. 38–39)</h2>
+      <p>Parameters_Analytical_Solution.m · Parameters_stretch.m</p>
+    </div>
+  </div>
+  <p class="sec-desc">The result of the entire formulation: critical buckling load \(\lambda_0\) and postbuckling equilibrium path coefficients \(\lambda_1, \lambda_2\).</p>
+
+  <div class="card">
+    <h3>Common factor</h3>
+    <div class="eq">
+      \[\mathcal{T} = \frac{1}{\chi_1\,V_{18} + \chi_2\,V_{19}}\]
+    </div>
+    <p>Here \(\chi_1 = -1\) (x-direction load), \(\chi_2 = -1\) (biaxial) or \(\chi_2 = 0\) (uniaxial).</p>
+  </div>
+
+  <div class="card">
+    <h3>Critical buckling load \(\lambda_0\)</h3>
+    <div class="eq" style="border-left-color:var(--amber);">
+      \[\lambda_0 = -\left(S_2 + V_{11} + P_{11}V_{14} + P_{21}V_{15}\right)\cdot\mathcal{T}\]
+    </div>
+    <div class="eq-label a" style="margin-top:0.8rem;">Dimensionless critical load</div>
+    <div class="eq amber">
+      \[\bar{N}_{cr} = \lambda_0 \cdot \frac{a^2}{E_m\,h^3}\]
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Postbuckling linear coefficient \(\lambda_1\)</h3>
+    <div class="eq" style="border-left-color:var(--cyan);">
+      \[\lambda_1 = -h\left(V_{12} + P_{12}V_{14} + P_{22}V_{15} + P_{11}V_{16} + P_{21}V_{17}\right)\cdot\mathcal{T}\]
+    </div>
+    <div class="note">For symmetric plates, \(B_{ij}=0 \Rightarrow \lambda_1=0\) (yielding a symmetric postbuckling equilibrium path).</div>
+  </div>
+
+  <div class="card">
+    <h3>Postbuckling nonlinear coefficient \(\lambda_2\)</h3>
+    <div class="eq" style="border-left-color:var(--emerald);">
+      \[\lambda_2 = -h^2\left(V_{13} + P_{12}V_{16} + P_{22}V_{17}\right)\cdot\mathcal{T}\]
+    </div>
+  </div>
+
+  <div class="card" style="border-color:rgba(99,102,241,0.3);background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(6,182,212,0.06));">
+    <h3 style="color:#fff;">Complete Postbuckling Equilibrium Path</h3>
+    <div class="eq" style="border-left-color:var(--indigo);background:rgba(0,0,0,0.5);">
+      \[\boxed{\bar{N} = \lambda_0 + \lambda_1\!\left(\frac{W}{h}\right) + \lambda_2\!\left(\frac{W}{h}\right)^2}\]
+    </div>
+    <p>This equation defines the postbuckling equilibrium path relating the non-dimensional load \(\bar{N}\) to the normalized central deflection amplitude \(W/h\). The difference between HSDT and Quasi-3D is reflected solely in the magnitudes of the \(\lambda_0, \lambda_1, \lambda_2\) coefficients.</p>
+  </div>
+
+  <div class="card">
+    <h3>Calculation Flow (Summary)</h3>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#a5b4fc;white-space:nowrap;">§1–§2</div>
+        <div style="font-size:0.82rem;color:var(--muted);">Material + Distribution → \(E(z), \nu(z), \alpha(z)\)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#a5b4fc;white-space:nowrap;">§3 or §4</div>
+        <div style="font-size:0.82rem;color:var(--muted);">HSDT: \(Q_{ij}(z)\) &nbsp;|&nbsp; Quasi-3D: \(C_{ij}(z)\)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#a5b4fc;white-space:nowrap;">§5</div>
+        <div style="font-size:0.82rem;color:var(--muted);">Thickness integrals → \(A,B,D,E,F,H\) and thermal resultants</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(6,182,212,0.2);border:1px solid rgba(6,182,212,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#67e8f9;white-space:nowrap;">§6 (sadece Q3D)</div>
+        <div style="font-size:0.82rem;color:var(--muted);">Static condensation → \(A^c,B^c,D^c,E^c,F^c,H^c\)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#a5b4fc;white-space:nowrap;">§7–§8</div>
+        <div style="font-size:0.82rem;color:var(--muted);">Inverted stiffness \(C_{ij}\) and geometric \(J_{ij}\) coefficients</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#a5b4fc;white-space:nowrap;">§9–§12</div>
+        <div style="font-size:0.82rem;color:var(--muted);">S, R, S₂, V coefficients (Galerkin integrals)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#a5b4fc;white-space:nowrap;">§13</div>
+        <div style="font-size:0.82rem;color:var(--muted);">Rotational condensation → \(P_{ij}\) coefficients</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.7rem;">
+        <div style="background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.78rem;color:#fcd34d;white-space:nowrap;">§14 ⟶ OUTPUT</div>
+        <div style="font-size:0.82rem;color:var(--muted);">\(\lambda_0, \lambda_1, \lambda_2\) → Buckling load and equilibrium path</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:2rem 0;border-top:1px solid var(--border);color:var(--muted);font-size:0.78rem;margin-top:2rem;">
+  <p>FG-GOEAM Plate Postbuckling Analysis — Complete Mathematical Formulation</p>
+  <p style="margin-top:0.3rem;">All equations are directly extracted from the MATLAB code and rendered using MathJax.</p>
+</footer>
+
+</div>
+</body>
+</html>
